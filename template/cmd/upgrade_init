@@ -1,0 +1,5 @@
+#!/bin/bash
+# Runs before an upgrade overwrites files.
+source "$(dirname "$0")/common"
+stop_bg
+exit 0

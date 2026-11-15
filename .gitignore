@@ -1,0 +1,8 @@
+# 上游运行时与产物不进 git
+apps/*/src/app/server/
+apps/*/src/app.tgz
+apps/*/src/*.fpk
+apps/*/dist/
+*.fpk
+.DS_Store
+__pycache__/

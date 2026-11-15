@@ -1,0 +1,31 @@
+[
+  {
+    "stepTitle": "__DISPLAY_NAME__ 安装配置",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "Web 访问端口，安装后可在应用设置中修改。修改会重启应用。"
+      },
+      {
+        "type": "text",
+        "field": "launcher_port",
+        "label": "Web 端口",
+        "initValue": "__PORT__",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入端口号"
+          },
+          {
+            "pattern": "^[0-9]+$",
+            "message": "请输入有效的端口号"
+          }
+        ]
+      },
+      {
+        "type": "tips",
+        "helpText": "__WIZARD_TIPS__"
+      }
+    ]
+  }
+]

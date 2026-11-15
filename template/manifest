@@ -1,0 +1,16 @@
+appname               = APPNAME
+version               = 0.0.1
+display_name          = Display Name
+desc                  = One-line description.
+platform              = ARCH
+source                = thirdparty
+maintainer            = upstream-maintainer
+maintainer_url        = https://github.com/owner/repo
+distributor           = zcc050
+distributor_url       = https://github.com/zcc050/FnDepot
+os_min_version        = 1.0.0
+desktop_uidir         = ui
+desktop_applaunchname = APPNAME.Application
+service_port          = PORT
+checkport             = true
+ctl_stop              = true

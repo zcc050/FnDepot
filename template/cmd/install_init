@@ -1,0 +1,11 @@
+#!/bin/bash
+# Runs before files are copied. Fail early on an unusable environment.
+source "$(dirname "$0")/common"
+
+PORT="${port:-PORT_DEFAULT}"
+if ss -tln 2>/dev/null | grep -q ":${PORT} "; then
+    echo "端口 ${PORT} 已被占用，请换一个端口后重试" >"${TRIM_TEMP_LOGFILE}"
+    exit 1
+fi
+echo "端口检测通过" >"${TRIM_TEMP_LOGFILE}"
+exit 0

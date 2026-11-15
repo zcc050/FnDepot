@@ -1,0 +1,33 @@
+[
+  {
+    "stepTitle": "确认卸载",
+    "items": [
+      {
+        "type": "radio",
+        "field": "wizard_delete_data",
+        "label": "是否同时删除 __DISPLAY_NAME__ 的数据（配置、会话、日志）",
+        "initValue": "false",
+        "options": [
+          {
+            "label": "保留数据（推荐）",
+            "value": "false"
+          },
+          {
+            "label": "删除所有数据 - 不可恢复！",
+            "value": "true"
+          }
+        ],
+        "rules": [
+          {
+            "required": true,
+            "message": "请选择数据保留选项"
+          }
+        ]
+      },
+      {
+        "type": "tips",
+        "helpText": " "
+      }
+    ]
+  }
+]

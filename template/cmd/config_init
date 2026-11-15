@@ -1,0 +1,4 @@
+#!/bin/bash
+# Runs before the user's settings changes are applied.
+source "$(dirname "$0")/common"
+exit 0
