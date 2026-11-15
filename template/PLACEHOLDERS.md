@@ -1,2 +1,3 @@
-`__APPNAME__` `__DISPLAY_NAME__` `__PORT__` `__ARCH__` `__WIZARD_TIPS__` are substituted per app.
-Replace __APPNAME__ in cmd/common (APPNAME=), config/privilege, app/ui/config key and desktop_applaunchname.
+占位符：`__APPNAME__` `__DISPLAY_NAME__` `__DESC__` `__PORT__` `__ARCH__` `__WIZARD_TIPS__`。
+出现位置：manifest、cmd/common（`APPNAME=`）、config/privilege（username/groupname）、app/ui/config（`.url` 的 key 与 title）、wizard/install、wizard/config。
+`__ARCH__` 只能是 x86 / arm / loongarch / risc-v / all。

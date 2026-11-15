@@ -51,7 +51,7 @@ wizard/           # 安装/设置/卸载向导 JSON，可缺省
 | `appname` | 小写、唯一，等于目录名 |
 | `version` | 点分数字，飞牛据此判断升级；不要带 `v` 前缀或 `-nightly` 后缀 |
 | `display_name` `desc` | 商店展示 |
-| `platform` | `x86` / `arm` / `all`，与本次构建的架构一致 |
+| `platform` | `x86` / `arm` / `loongarch` / `risc-v` / `all`（fnpack 只认这五个值） |
 | `source` | 固定 `thirdparty` |
 | `maintainer` `maintainer_url` | 上游作者 |
 | `distributor` `distributor_url` | 打包者：`zcc050` / `https://github.com/zcc050/FnDepot` |
@@ -88,6 +88,9 @@ wizard/           # 安装/设置/卸载向导 JSON，可缺省
 ```
 
 `${launcher_port}` 取自 wizard 字段 `launcher_port`；应用必须真的监听该端口，并且对 `/` 返回 200。
+fnpack 会校验：`.url` 下的 key 必须以 manifest 的 `appname` 开头（`<appname>.Application`），否则拒绝出包。
+
+> 模板已用 `fnpack build` 实测通过（生命周期 start/stop/status + HTTP 200）。
 
 ### wizard 项类型
 
