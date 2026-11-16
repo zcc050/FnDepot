@@ -1,5 +1,5 @@
 appname               = t3code
-version               = 0.1.9-1
+version               = 0.1.9-2
 display_name          = T3 Code
 desc                  = 把 Claude Code、Codex 等编码 Agent 跑在 NAS 上，从电脑或手机同一个界面控制
 platform              = x86

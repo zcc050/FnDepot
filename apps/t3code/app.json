@@ -9,7 +9,7 @@
   "platform": [
     "x86"
   ],
-  "pkg_revision": 1,
+  "pkg_revision": 2,
   "upstream": "pingdotgg/t3code",
   "upstream_url": "https://github.com/pingdotgg/t3code",
   "license": "MIT",

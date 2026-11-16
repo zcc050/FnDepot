@@ -118,6 +118,18 @@
               "size": 40284397
             }
           }
+        },
+        "0.1.4296-1": {
+          "changelog": "跟进上游 0.1.4296：模型/供应商面板与 Agent 适配更新，详见 https://github.com/yetone/magpie/releases/tag/v0.1.4296",
+          "updated_at": "2026-11-16T06:16:31Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/magpie-v0.1.4296-1/magpie-0.1.4296-1-x86.fpk",
+              "sha256": "3ae1ed41579eec46427a3ea8dd6d841eeb615d27277a6401e926b891b63a56b8",
+              "size": 40288632
+            }
+          }
         }
       }
     },
@@ -155,6 +167,18 @@
               "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.9-1/t3code-0.1.9-1-x86.fpk",
               "sha256": "439237c09727cfc01b79df9fe7b8e185d63bc35a1dc89db2003d8e1a2ac6428e",
               "size": 150415396
+            }
+          }
+        },
+        "0.1.9-2": {
+          "changelog": "跟进上游 0.1.9：编码 Agent 控制面、配对与远程访问改进，详见 https://github.com/pingdotgg/t3code/releases/tag/v0.1.9",
+          "updated_at": "2026-11-11T11:33:49Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.9-2/t3code-0.1.9-2-x86.fpk",
+              "sha256": "5c047c10aa9530380bdb864bfd23e6c16aad0766ba1840dbd74af1d5f0fc0770",
+              "size": 150418910
             }
           }
         }

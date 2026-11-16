@@ -20,21 +20,28 @@ Claude Code、Codex、OpenCode 等 Agent 统一换模型、统一走本地网关
 - HOME / XDG_* 全部重定向到 `$TRIM_PKGHOME`：供应商、密钥、订阅登录态都在 `$HOME/.config/magpie`，
   升级/重装不会丢。
 
-## 桌面入口方式：`type: url`，不是 `iframe`
+## 桌面入口方式：`iframe` + 独立端口（唯一能同时覆盖远程和局域网的形态）
 
-`ui/config` 的 `type` 决定飞牛怎么给小窗选路，三种形态后果完全不同：
+`ui/config` 的 `type` 决定飞牛怎么给小窗选路，三种形态的后果不一样：
 
-| 形态 | 典型应用 | 小窗地址 |
-| --- | --- | --- |
-| `type: iframe` + `gatewaySocket` + `gatewayPrefix` | quark、fn-seekbox、fndepot | 走飞牛自己的反代 `/app/<name>`，**不碰 fnos.net** |
-| `type: url` + 固定 `port` | hermes-studio、aistream、lunatv-enhanced | 浏览器直连 `<当前主机>:端口` |
-| `type: iframe` + 独立 `port`、无 gateway | 旧版本包、StirlingPDF | 飞牛分配给 `<app>-main.<nas-id>.fnos.net` |
+| 形态 | 典型应用 | 小窗地址 | 远程访问 |
+| --- | --- | --- | --- |
+| `iframe` + `gatewaySocket` + `gatewayPrefix` | quark、fn-seekbox、fndepot | 飞牛反代 `/app/<name>` | 可用 |
+| `url` + 固定 `port` | hermes-studio、aistream、lunatv-enhanced | 浏览器直连 `<当前主机>:端口` | **不可用** |
+| `iframe` + 独立 `port`、无 gateway | 本包、StirlingPDF | 飞牛分配给 `<app>-main.<nas-id>.fnos.net` | 可用 |
 
-第三种入口由 `trim-connect`（飞牛远程访问）的 DDNS 记录驱动，指向飞牛的中转节点。客户端解析不到
-这个子域名时，小窗直接报「找不到服务器 IP 地址」——**跟应用本身是否启动无关**，直连 `IP:端口` 一直是好的。
-magpie 不支持监听 unix socket（`web --addr` 只接受 `host:port`），走不了第一种；所以本包用第二种，
-和 hermes-studio 一致。`cmd/main` 在启动时会把实际 `launcher_port` 写回 `ui/config` 的 `port`，
-避免 wizard 改端口后入口对不上。
+两种「看起来更干净」的方案都试过，都走不通：
+
+- **`type: url`**：飞牛把入口拼成 `<当前主机>:<端口>`。用局域网 IP 登录时能开，用飞牛远程访问登录时
+  `<当前主机>` 是 fnos.net 域名、端口没有被反代，**直接打不开**。已回滚。
+- **`gatewaySocket` + `gatewayPrefix`**：入口变成 `/app/magpie`，理论上最干净，但实测 magpie
+  **不支持子路径**——`GET /app/magpie/` 返回 404（只认根路径），而它不支持监听 unix socket
+  （`web --addr` 只接受 `host:port`），无法像 quark / fndepot 那样自己把 HTTP 服务挂在 socket 上。
+  要走这条路得外挂一个会 strip 前缀、重写 `Location` 与静态资源路径的反向代理，代价和风险都不划算。
+
+所以本包保留第三种形态：飞牛通过 `trim-connect` 给应用分配 `<app>-main.<nas-id>.fnos.net`，
+这个入口在局域网和远程都能用。`cmd/main` 启动时会把实际 `launcher_port` 写回 `ui/config` 的 `port`，
+避免 wizard 改过端口后入口对不上。
 
 ## iframe 兼容补丁（重要）
 
