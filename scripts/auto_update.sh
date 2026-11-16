@@ -225,6 +225,26 @@ if [ "$PUBLISH" = "0" ] || [ "$DRY" = "1" ]; then
     exit 0
 fi
 
+log "----- 发布 Release"
+release_failed=0
+for u in "${updated[@]}"; do
+    app="${u%%:*}"; ver="${u##*:}"
+    if ! python3 "$ROOT/scripts/publish_release.py" --app "$app" --version "$ver" --arch "$ARCH"; then
+        log "FAIL $app $ver 发布失败"
+        release_failed=1
+        continue
+    fi
+    url="https://github.com/zcc050/FnDepot/releases/download/${app}-v${ver}/${app}-${ver}-${ARCH}.fpk"
+    code=$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 120 -I "$url" || true)
+    log "  下载地址 http=${code} ${url}"
+    case "$code" in 200|302) ;; *) log "WARN 下载地址返回 ${code}"; release_failed=1 ;; esac
+done
+
+if [ "$release_failed" = "1" ]; then
+    log "===== 有 Release 发布或下载校验失败，本轮不更新索引、不推送（避免索引指向 404）"
+    exit 3
+fi
+
 names=""
 for u in "${updated[@]}"; do names="${names} ${u%%:*}"; done
 log "----- 提交并推送"
@@ -244,21 +264,6 @@ if ! push_retry; then
     exit 3
 fi
 
-log "----- 发布 Release"
-release_failed=0
-for u in "${updated[@]}"; do
-    app="${u%%:*}"; ver="${u##*:}"
-    if ! python3 "$ROOT/scripts/publish_release.py" --app "$app" --version "$ver" --arch "$ARCH"; then
-        log "FAIL $app $ver 发布失败"
-        release_failed=1
-        continue
-    fi
-    url="https://github.com/zcc050/FnDepot/releases/download/${app}-v${ver}/${app}-${ver}-${ARCH}.fpk"
-    code=$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 120 -I "$url" || true)
-    log "  下载地址 http=${code} ${url}"
-    case "$code" in 200|302) ;; *) log "WARN 下载地址返回 ${code}"; release_failed=1 ;; esac
-done
-
 python3 - "$STATE_DIR/last-run.json" "${updated[@]}" <<'PY'
 import json, sys, datetime
 data = {"at": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -266,9 +271,5 @@ data = {"at": datetime.datetime.now().astimezone().isoformat(timespec="seconds")
 json.dump(data, open(sys.argv[1], "w"), ensure_ascii=False, indent=2)
 PY
 
-if [ "$release_failed" = "1" ]; then
-    log "===== 构建与推送完成，但部分 Release/下载校验失败（见上）"
-    exit 3
-fi
 log "===== 完成：${updated[*]}"
 exit 0
