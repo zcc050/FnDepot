@@ -65,7 +65,20 @@ is_running() {
     kill -0 "$(cat "${PID_FILE}")" 2>/dev/null || { rm -f "${PID_FILE}"; return 1; }
 }
 
-port_in_use() { ss -tln 2>/dev/null | grep -q ":$1 "; }
+port_in_use() {
+    local port="$1" hex
+    if command -v ss >/dev/null 2>&1; then
+        ss -tln 2>/dev/null | grep -q ":${port} "
+        return $?
+    fi
+    # 兜底：直读 /proc（state 0A = LISTEN），不依赖任何命令行工具。
+    # 飞牛调 status 时的环境未必有 ss，那时这里是唯一的判据。
+    hex="$(printf '%04X' "$port")"
+    awk -v h=":${hex}" '
+        NR > 1 && substr($2, length($2) - length(h) + 1) == h && $4 == "0A" { f = 1; exit }
+        END { exit !f }
+    ' /proc/net/tcp /proc/net/tcp6 2>/dev/null
+}
 
 # 端口被自己（本应用路径下的 magpie）占着，视作上一次没停干净
 # argv 里是否有某个参数**完全等于** $2（不做子串匹配，避免误判）
