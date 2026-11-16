@@ -48,6 +48,18 @@ if ! flock -n 9; then
 fi
 
 log() { printf '%s %s\n' "$(date '+%F %T')" "$*"; }
+
+# github.com:443 会间歇性不通，无人值守时要多轮退避，不能一次失败就丢掉提交
+push_retry() {
+    local i
+    for i in 1 2 3 4 5; do
+        if git -c http.version=HTTP/1.1 push origin HEAD:main; then return 0; fi
+        log "  push 第 $i 轮失败，$((i * 10))s 后重试"
+        sleep $((i * 10))
+    done
+    return 1
+}
+
 log "===== auto_update 开始 arch=${ARCH} dry=${DRY} publish=${PUBLISH} only=${ONLY:-all}"
 
 cd "$ROOT" || exit 2
@@ -60,12 +72,25 @@ if [ "$PUBLISH" = "1" ] && [ "$DRY" = "0" ] && [ "$ALLOW_DIRTY" = "0" ]; then
     fi
 fi
 
-# 需要 token 才能发布
+# 发布需要 GitHub 凭证。无人值守时它必须已经存好（git credential store 的文件，或 GH_TOKEN）。
+# 这里只做自检，不做交互式登录——cron 里没有 stdin。
 if [ "$PUBLISH" = "1" ] && [ "$DRY" = "0" ]; then
-    if ! printf 'protocol=https\nhost=github.com\n\n' | git credential fill 2>/dev/null | grep -q '^password=' \
-       && [ -z "${GH_TOKEN:-}${GITHUB_TOKEN:-}" ]; then
-        log "FAIL 拿不到 GitHub token（git credential / GH_TOKEN）"
+    if ! gh_credential_ok; then
+        log "FAIL 拿不到 GitHub 凭证（credential.helper=store 的文件里没有 github.com，也没有 GH_TOKEN）"
+        log "     一次性修法：printf 'protocol=https\\nhost=github.com\\n\\n' | git credential approve"
         exit 2
+    fi
+fi
+
+# 上次 push 失败留下的提交：先补推，否则这轮会因"dist 已是最新"而永远不再推它
+if [ "$PUBLISH" = "1" ] && [ "$DRY" = "0" ]; then
+    ahead="$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)"
+    if [ "${ahead:-0}" -gt 0 ]; then
+        log "本地领先远端 ${ahead} 个提交，先补推"
+        if ! push_retry; then
+            log "FAIL 补推失败，本轮跳过"
+            exit 3
+        fi
     fi
 fi
 
@@ -198,14 +223,8 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"; then
     log "FAIL git commit 失败"
     exit 3
 fi
-pushed=0
-for i in 1 2 3; do
-    if git -c http.version=HTTP/1.1 push origin HEAD:main; then pushed=1; break; fi
-    log "  push 第 $i 次失败，5s 后重试"
-    sleep 5
-done
-if [ "$pushed" != "1" ]; then
-    log "FAIL git push 失败（本地已提交，需要手动 push）"
+if ! push_retry; then
+    log "FAIL git push 失败（本地已提交，下次运行会先补推）"
     exit 3
 fi
 

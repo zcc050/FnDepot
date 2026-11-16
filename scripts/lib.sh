@@ -42,13 +42,30 @@ for r in json.load(sys.stdin):
 ' "$2"
 }
 
-download() {  # download <url> <dest-file>; cached, resumable-ish
-    local url="$1" dest="$2"
+download() {  # download <url> <dest-file>; cached, resumable, retried
+    local url="$1" dest="$2" i
     if [ -s "$dest" ]; then echo "  cached $(basename "$dest")"; return 0; fi
     mkdir -p "$(dirname "$dest")"
     echo "  downloading $(basename "$dest")"
-    curl -fL --retry 3 --connect-timeout 30 -o "$dest.part" "$url"
-    mv "$dest.part" "$dest"
+    # 无人值守环境里 github.com:443 会间歇不通：续传 + 多轮退避重试，不要一次失败就放弃
+    for i in 1 2 3 4 5; do
+        if curl -fL --http1.1 --retry 3 --retry-all-errors --retry-delay 3 \
+                 --connect-timeout 20 --max-time 1800 -C - \
+                 -o "$dest.part" "$url"; then
+            mv "$dest.part" "$dest"
+            return 0
+        fi
+        echo "  下载失败（第 $i 轮），$((i * 5))s 后重试" >&2
+        sleep $((i * 5))
+    done
+    echo "  下载失败：$url" >&2
+    return 1
+}
+
+# 无人值守时凭证必须是"存好的"：优先环境变量，其次 git credential（store 文件绝对路径）
+gh_credential_ok() {
+    [ -n "${GH_TOKEN:-}${GITHUB_TOKEN:-}" ] && return 0
+    printf 'protocol=https\nhost=github.com\n\n' | git credential fill 2>/dev/null | grep -q '^password=.'
 }
 
 set_manifest() {  # set_manifest <src-dir> <key> <value> [key value ...]
