@@ -6,9 +6,19 @@ start_app() {
     stop_bg
     start_bg "${SERVER_DIR}/t3/t3" serve --port "${launcher_port:-3773}" --host 0.0.0.0 --lan \
         --base-dir "${TRIM_PKGHOME}/.t3" --no-browser || return 1
-    # The desktop entry opens /pair#token=<one-time token> so fnOS users land signed in.
-    local tok
-    tok=$(wait_pair_token) && set_url "/pair#token=${tok}" && log_msg "desktop entry -> /pair#token=…"
+    # 桌面入口用长期配对码免登录；mint 失败时退回启动日志里的那个（短时效）
+    local tok=""
+    tok="$(mint_pairing_token)"
+    if [ -z "$tok" ]; then
+        log_msg "WARN mint 长期配对码失败，退回启动日志里的 token（有时效）"
+        tok="$(wait_pair_token)"
+    fi
+    if [ -n "$tok" ]; then
+        set_url "/pair#token=${tok}"
+        log_msg "desktop entry -> /pair#token=…"
+    else
+        log_msg "WARN 没拿到配对码，桌面入口未带 token"
+    fi
     return 0
 }
 

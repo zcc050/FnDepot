@@ -68,6 +68,31 @@ wait_pair_token() {
     return 1
 }
 
+# 桌面入口需要长期有效的配对码。
+# 启动日志里那个 `Token:` 是一次性/短时效的（pair 默认 5 分钟），用户过一会儿再点小窗
+# 就只剩「Invalid pairing token」。所以单独 mint 一个长期 token 写进入口。
+mint_pairing_token() {
+    local ttl="${T3CODE_ENTRY_TOKEN_TTL:-90d}" out tok
+    command -v python3 >/dev/null 2>&1 || return 1
+    out="$("${SERVER_DIR}/t3/t3" auth pairing create \
+        --base-dir "${TRIM_PKGHOME}/.t3" \
+        --ttl "$ttl" --label "fnos-desktop" --json 2>>"${LOG_FILE}")" || return 1
+    tok="$(printf '%s' "$out" | python3 -c '
+import json, sys
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    raise SystemExit
+url = d.get("pairUrl") or ""
+if "#token=" in url:
+    print(url.rsplit("#token=", 1)[1]); raise SystemExit
+for k in ("token", "pairingToken", "secret"):
+    if d.get(k):
+        print(d[k]); raise SystemExit
+' 2>/dev/null)"
+    [ -n "$tok" ] && printf '%s' "$tok"
+}
+
 set_url() {  # set_url <path[?query]> -> rewrite the desktop entry's url
     local cfg="${TRIM_APPDEST}/ui/config"
     sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"$1\"|" "$cfg"
