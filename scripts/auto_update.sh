@@ -151,12 +151,21 @@ except Exception: print('')
         failed+=("$app:build")
         continue
     fi
-    fpk=$(ls "$ROOT/apps/$app/dist/$app-$up_ver-$ARCH.fpk" 2>/dev/null | tail -1)
-    if [ -z "$fpk" ]; then
-        log "FAIL $app 没找到 $app-$up_ver-$ARCH.fpk"
+    # 包版本可能带修订号（如 0.1.4299-1），文件名与版本一律以 dist/<arch>.json 为唯一事实源
+    read -r dist_file pkg_ver <<<"$(python3 -c "
+import json,sys
+try:
+    d = json.load(open('$ROOT/apps/$app/dist/$ARCH.json'))
+    print(d['file'], d['version'])
+except Exception:
+    print('')
+")"
+    if [ -z "${dist_file:-}" ] || [ ! -f "$ROOT/apps/$app/dist/$dist_file" ]; then
+        log "FAIL $app 没找到构建产物（dist/$ARCH.json 缺失或指向的文件不存在）"
         failed+=("$app:artifact")
         continue
     fi
+    fpk="$ROOT/apps/$app/dist/$dist_file"
     if ! python3 "$ROOT/scripts/verify_fpk.py" "$fpk"; then
         log "FAIL $app 结构校验失败"
         failed+=("$app:verify")
@@ -180,7 +189,7 @@ except Exception: print('')
             log "WARN $app arm 包仅做结构校验（无 qemu-aarch64-static，未真机运行）"
         fi
     fi
-    updated+=("$app:$up_ver")
+    updated+=("$app:$pkg_ver")
 done
 
 if [ "$DRY" = "1" ]; then
