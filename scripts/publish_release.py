@@ -61,14 +61,37 @@ def api(method: str, path: str, tok: str, body: dict | None = None):
 
 
 def upload(tok: str, url: str, path: str) -> int:
+    """流式上传（不能把整包读进内存，240MB 会炸；也不能只发 header，GitHub 会 408）。"""
+    from urllib.parse import urlparse
+    import http.client
+
+    u = urlparse(url)
     size = os.path.getsize(path)
-    req = urllib.request.Request(url, data=None, method="POST")
-    req.add_header("Authorization", f"Bearer {tok}")
-    req.add_header("Accept", "application/vnd.github+json")
-    req.add_header("Content-Type", "application/octet-stream")
-    req.add_header("Content-Length", str(size))
-    with open(path, "rb") as f, urllib.request.urlopen(req, timeout=1800) as resp:
+    conn = http.client.HTTPSConnection(u.hostname, timeout=1800)
+    try:
+        conn.putrequest("POST", u.path + ("?" + u.query if u.query else ""))
+        conn.putheader("Authorization", f"Bearer {tok}")
+        conn.putheader("Accept", "application/vnd.github+json")
+        conn.putheader("Content-Type", "application/octet-stream")
+        conn.putheader("Content-Length", str(size))
+        conn.endheaders()
+        sent = 0
+        with open(path, "rb") as f:
+            while True:
+                chunk = f.read(1 << 20)
+                if not chunk:
+                    break
+                conn.send(chunk)
+                sent += len(chunk)
+        if sent != size:
+            raise OSError(f"上传字节数不符: {sent} != {size}")
+        resp = conn.getresponse()
+        body = resp.read(400)
+        if resp.status >= 300:
+            raise urllib.error.HTTPError(url, resp.status, body[:200].decode("utf-8", "replace"), resp.headers, None)
         return resp.status
+    finally:
+        conn.close()
 
 
 def main() -> int:

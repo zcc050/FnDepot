@@ -45,6 +45,45 @@ docs/PACKAGING.md        # fpk 打包契约与验收标准
 template/                # fpk 模板
 ```
 
+## 自动化更新（每天检查上游 → 自动打包 → 自动发布）
+
+一条命令跑完整链路：
+
+```bash
+bash scripts/auto_update.sh            # 检查上游稳定版 → 构建 → 校验 → 冒烟 → 重建索引 → 提交推送 → 发 Release
+bash scripts/auto_update.sh --dry-run  # 只报告有没有更新
+bash scripts/auto_update.sh --no-publish --only magpie   # 只构建到本地
+```
+
+流程与闸门：
+
+1. `scripts/lib.sh version <app>` 取上游最新**稳定**版本（跳过 nightly/beta/rc），与 `apps/<app>/dist/<arch>.json` 比对。
+2. 有新版 → `apps/<app>/build.sh --arch x86` 构建（缓存上游产物，重复跑不重复下载）。
+3. `scripts/verify_fpk.py`：manifest/checksum/cmd 权限/JSON/图标契约。
+4. `scripts/smoke.sh`：解包 → start → HTTP 200 → status=0 → stop → 端口释放。
+5. 全部通过才 `scripts/build_index.py` 重建索引，并用 `scripts/validate_source.py` 校验
+   （**分类白名单**、schema、素材存在性、与 app.json 一致）。
+6. `git commit && git push`，再 `scripts/publish_release.py` 建 `<app>-v<ver>` Release 并上传，
+   最后 HEAD 校验下载地址。
+7. 任一步失败 → **不发布**，本地产物与日志保留；索引不会被改成指向不存在的资产。
+
+运行态都在 `.auto-update/`（已 gitignore）：`auto-update-YYYYMMDD.log`、`lock`、`last-run.json`。
+
+### 定时任务
+
+```bash
+# 每天 04:17 检查一次（crontab -e 或 crontab -l 里加）
+17 4 * * * cd /vol1/@apphome/hermes-studio/work/FnDepot && bash scripts/auto_update.sh >> .auto-update/cron.log 2>&1
+```
+
+### 单独校验源（发布前/排错用）
+
+```bash
+python3 scripts/validate_source.py           # 本地：分类白名单/schema/素材/一致性
+python3 scripts/validate_source.py --online  # 额外 HEAD 校验所有下载地址
+python3 scripts/check_updates.py             # 上游是否有新版（退出码 10 = 有）
+```
+
 ## 本地构建与发布
 
 ```bash
