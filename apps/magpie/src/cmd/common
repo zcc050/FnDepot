@@ -1,0 +1,66 @@
+#!/bin/bash
+# Shared helpers for the fpk lifecycle scripts.
+# fnOS exports these when calling cmd/*:
+#   TRIM_APPDEST  installed app dir       (/vol1/@appstore/<appname>)
+#   TRIM_PKGVAR   persistent data dir     (/vol1/@appdata/<appname>)
+#   TRIM_PKGHOME  per-app home dir        (/vol1/@apphome/<appname>)
+#   TRIM_APPDIR    fpk root while installing/uninstalling
+#   TRIM_TEMP_LOGFILE  file whose content the installer shows on failure
+# Wizard fields are exported under their field name (e.g. $port).
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
+
+APPNAME="magpie"
+SERVER_DIR="${TRIM_APPDEST}/server"
+LOG_DIR="${TRIM_PKGVAR}/logs"
+LOG_FILE="${LOG_DIR}/${APPNAME}.log"
+PID_FILE="${TRIM_PKGVAR}/${APPNAME}.pid"
+export HOME="${TRIM_PKGHOME}"
+export XDG_CONFIG_HOME="${TRIM_PKGHOME}/.config"
+export XDG_DATA_HOME="${TRIM_PKGHOME}/.local/share"
+export XDG_CACHE_HOME="${TRIM_PKGHOME}/.cache"
+
+mkdir -p "${LOG_DIR}" "${TRIM_PKGHOME}" "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" "${XDG_CACHE_HOME}"
+
+log_msg() { echo "$(date '+%F %T') - $*" >>"${LOG_FILE}"; }
+# install_log goes to stderr so it lands in the installer's log view.
+install_log() { echo "$(date '+%F %T') $*" >&2; }
+
+is_running() {
+    [ -s "${PID_FILE}" ] || return 1
+    kill -0 "$(cat "${PID_FILE}")" 2>/dev/null || { rm -f "${PID_FILE}"; return 1; }
+}
+
+# start_bg <command...>: start detached, return 0 as soon as it is alive.
+start_bg() {
+    if is_running; then log_msg "already running (pid $(cat "${PID_FILE}"))"; return 0; fi
+    log_msg "start: $*"
+    ( cd "${SERVER_DIR}" && exec "$@" >>"${LOG_FILE}" 2>&1 ) &
+    echo $! >"${PID_FILE}"
+    sleep 2
+    is_running && { log_msg "started (pid $(cat "${PID_FILE}"))"; return 0; }
+    log_msg "exited right after start, see ${LOG_FILE}"
+    rm -f "${PID_FILE}"
+    return 1
+}
+
+stop_bg() {
+    is_running || { log_msg "not running"; return 0; }
+    local pid; pid=$(cat "${PID_FILE}")
+    log_msg "stop (pid ${pid})"
+    kill -TERM "${pid}" 2>/dev/null
+    for _ in $(seq 1 15); do kill -0 "${pid}" 2>/dev/null || break; sleep 1; done
+    kill -0 "${pid}" 2>/dev/null && kill -KILL "${pid}" 2>/dev/null
+    rm -f "${PID_FILE}"
+    return 0
+}
+
+# magpie's page answers 401 without the key it prints at startup; keep one and put
+# it in the desktop entry's URL so the app opens signed in.
+ensure_web_key() {
+    local f="${TRIM_PKGVAR}/web.key" k
+    if [ -s "${f}" ]; then k=$(cat "${f}"); else
+        k=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 24); echo "${k}" >"${f}"; chmod 600 "${f}"
+    fi
+    sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"/?k=${k}\"|" "${TRIM_APPDEST}/ui/config" 2>/dev/null
+    printf '%s' "${k}"
+}

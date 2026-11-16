@@ -1,0 +1,24 @@
+#!/bin/bash
+# Service control. Exit 0 = ok, status exits 3 when stopped.
+source "$(dirname "$0")/common"
+
+export HERMES_HOME="${TRIM_PKGHOME}/.hermes"
+export HERMES_WEB_UI_HOME="${TRIM_PKGHOME}/.hermes-web-ui"
+export PORT="${launcher_port:-6060}"
+PID_FILE="${HERMES_WEB_UI_HOME}/server.pid"   # 上游 CLI 自己写这个
+
+start_app() {
+    is_running && return 0
+    "${SERVER_DIR}/node/bin/node" "${SERVER_DIR}/ekko/bin/hermes-web-ui.mjs" start --port "${PORT}" >>"${LOG_FILE}" 2>&1
+    for _ in $(seq 1 90); do is_running && return 0; sleep 1; done
+    log_msg "90 秒内没有起来，见 ${LOG_FILE}"
+    return 1
+}
+
+case "$1" in
+    start)   start_app ;;
+    stop)    stop_bg ;;
+    restart) stop_bg; sleep 1; start_app ;;
+    status)  is_running && exit 0 || exit 3 ;;
+    *)       echo "usage: $0 {start|stop|restart|status}"; exit 1 ;;
+esac

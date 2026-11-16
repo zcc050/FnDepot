@@ -1,0 +1,21 @@
+#!/bin/bash
+# Service control. Exit 0 = ok, status exits 3 when stopped.
+source "$(dirname "$0")/common"
+
+start_app() {
+    stop_bg
+    start_bg "${SERVER_DIR}/t3/t3" serve --port "${launcher_port:-3773}" --host 0.0.0.0 --lan \
+        --base-dir "${TRIM_PKGHOME}/.t3" --no-browser || return 1
+    # The desktop entry opens /pair#token=<one-time token> so fnOS users land signed in.
+    local tok
+    tok=$(wait_pair_token) && set_url "/pair#token=${tok}" && log_msg "desktop entry -> /pair#token=…"
+    return 0
+}
+
+case "$1" in
+    start)   start_app ;;
+    stop)    stop_bg; pkill -f "${SERVER_DIR}/t3/t3 serve" 2>/dev/null; exit 0 ;;
+    restart) stop_bg; sleep 1; start_app ;;
+    status)  is_running && exit 0 || exit 3 ;;
+    *)       echo "usage: $0 {start|stop|restart|status}"; exit 1 ;;
+esac

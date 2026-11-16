@@ -1,0 +1,9 @@
+#!/bin/bash
+# Runs after files are copied, before the app is started.
+source "$(dirname "$0")/common"
+
+chmod +x "${SERVER_DIR}/magpie" 2>/dev/null
+ensure_web_key >/dev/null
+install_log "安装完成: ${TRIM_APPDEST}"
+echo "安装完成" >"${TRIM_TEMP_LOGFILE}"
+exit 0

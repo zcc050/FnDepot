@@ -1,0 +1,7 @@
+#!/bin/bash
+# Runs after an upgrade; the service is started again by the system.
+source "$(dirname "$0")/common"
+chmod +x "${SERVER_DIR}/magpie" 2>/dev/null
+ensure_web_key >/dev/null
+install_log "升级完成"
+exit 0

@@ -1,0 +1,31 @@
+[
+  {
+    "stepTitle": "magpie 安装配置",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "Web 访问端口，安装后可在应用设置中修改。修改会重启应用。"
+      },
+      {
+        "type": "text",
+        "field": "launcher_port",
+        "label": "Web 端口",
+        "initValue": "3430",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入端口号"
+          },
+          {
+            "pattern": "^[0-9]+$",
+            "message": "请输入有效的端口号"
+          }
+        ]
+      },
+      {
+        "type": "tips",
+        "helpText": "magpie 首次打开需要在 Providers 里添加一个模型供应商（粘贴 API Key 或登录订阅），然后到 Agents 里给每个 Agent 选模型。数据在 /vol1/@appdata/magpie 与 /vol1/@apphome/magpie。"
+      }
+    ]
+  }
+]

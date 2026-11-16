@@ -1,0 +1,7 @@
+#!/bin/bash
+# Runs after the user's settings changes are applied; restart to pick them up.
+source "$(dirname "$0")/common"
+stop_bg
+start_app
+echo "配置已更新" >"${TRIM_TEMP_LOGFILE}"
+exit 0

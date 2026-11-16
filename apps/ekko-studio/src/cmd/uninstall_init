@@ -1,0 +1,5 @@
+#!/bin/bash
+# Runs when uninstall starts.
+source "$(dirname "$0")/common"
+stop_bg
+exit 0

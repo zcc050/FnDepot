@@ -1,0 +1,22 @@
+{
+  "appname": "t3code",
+  "display_name": "T3 Code",
+  "desc": "把 Claude Code、Codex 等编码 Agent 跑在 NAS 上，从电脑或手机同一个界面控制",
+  "categories": ["开发工具", "远程控制"],
+  "platform": ["x86"],
+  "upstream": "pingdotgg/t3code",
+  "upstream_url": "https://github.com/pingdotgg/t3code",
+  "license": "MIT",
+  "run_as": "package",
+  "install_type": "root",
+  "is_docker": false,
+  "service_port": "3773",
+  "maintainer": "pingdotgg",
+  "maintainer_url": "https://github.com/pingdotgg/t3code",
+  "distributor": "zcc050",
+  "distributor_url": "https://github.com/zcc050/FnDepot",
+  "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
+  "icon": "ICON.PNG",
+  "previews": ["Preview/1.png"],
+  "readme": "README.md"
+}

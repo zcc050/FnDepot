@@ -128,3 +128,58 @@ bash apps/<app>/build.sh            # 默认 x86，或 --arch arm
    `cmd/main status` 退出码 0，`cmd/main stop` 能停干净。
 4. 端口别用主机上已占用的：本机 3425、3430、6060、3000、8787、18088 等已被占用，
    测试用 181xx 段，并在启动命令里显式覆盖端口（magpie 还要覆盖 `MAGPIE_ADDR`）。
+
+## 5. FnDepot 源索引（fnpack.json）
+
+仓库根目录的 `fnpack.json` 是 V2 单文件索引，由 `scripts/build_index.py` 从
+`apps/*/app.json` + `apps/*/dist/<arch>.json` 生成，不要手改。
+
+```json
+{
+  "schema_version": "2",
+  "source_info": {"name": "源名称", "author": "zcc050",
+                  "homepage": "https://github.com/zcc050/FnDepot", "description": "..."},
+  "apps": {
+    "<appname>": {
+      "display_name": "...", "desc": "...",
+      "platform": ["x86"], "categories": ["开发工具"],
+      "icon_url": "./<appname>/ICON.PNG",
+      "preview_urls": ["./<appname>/Preview/1.png"],
+      "readme_url": "./<appname>/README.md",
+      "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
+      "maintainer": "...", "maintainer_url": "...",
+      "distributor": "zcc050", "distributor_url": "https://github.com/zcc050/FnDepot",
+      "run_as": "package", "install_type": "root", "is_docker": false,
+      "service_port": "3773",
+      "releases": {
+        "<version>": {
+          "changelog": "...", "updated_at": "2026-11-16T09:47:00+08:00",
+          "os_min_version": "1.0.0",
+          "packages": {"x86": {"download_url": "https://github.com/.../releases/download/<app>-v<ver>/<file>.fpk",
+                               "sha256": "…", "size": 12345}}
+        }
+      }
+    }
+  }
+}
+```
+
+约定：
+
+- `download_url` 指向本仓库 Release 资产（绝对 URL）；fpk 超过 GitHub 单文件 100MB 限制时
+  必须走 Release，不能提交进 git。
+- Release tag 固定为 `<appname>-v<version>`，每个 tag 只放该应用该架构的 fpk。
+- 历史版本保留在 `releases` 里（生成脚本会合并旧索引），便于回滚。
+- 图标/预览图/README 用仓库内相对路径，保证 raw.githubusercontent 可直接取到。
+
+## 6. 素材
+
+| 文件 | 要求 |
+|---|---|
+| `apps/<app>/ICON.PNG` | 256×256 PNG，商店列表用 |
+| `apps/<app>/ICON_256.PNG` | 同上（fnOS 高分屏） |
+| `apps/<app>/src/ICON.PNG` | 打进 fpk 的图标，256×256 |
+| `apps/<app>/src/app/ui/images/icon_64.png` | 桌面图标 64×64 |
+| `apps/<app>/Preview/1.png` | 1440×900 截图，`scripts/preview.sh` 生成 |
+
+图标一律用上游项目图标（本项目已修正模板占位图）。
