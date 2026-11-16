@@ -10,6 +10,8 @@
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
 
 APPNAME="t3code"
+# 桌面入口是 type: url + 独立端口，飞牛不带任何路径前缀，端口必须与监听一致
+WEB_PORT="${launcher_port:-3773}"
 SERVER_DIR="${TRIM_APPDEST}/server"
 LOG_DIR="${TRIM_PKGVAR}/logs"
 LOG_FILE="${LOG_DIR}/${APPNAME}.log"
@@ -67,5 +69,8 @@ wait_pair_token() {
 }
 
 set_url() {  # set_url <path[?query]> -> rewrite the desktop entry's url
-    sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"$1\"|" "${TRIM_APPDEST}/ui/config"
+    local cfg="${TRIM_APPDEST}/ui/config"
+    sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"$1\"|" "$cfg"
+    # 桌面入口用的是独立端口（type: url），端口随 launcher_port 变化，必须同步写回
+    sed -i "s|\"port\": \"[^\"]*\"|\"port\": \"${WEB_PORT}\"|" "$cfg" 2>/dev/null
 }

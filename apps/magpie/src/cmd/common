@@ -109,8 +109,9 @@ ensure_web_key() {
         chmod 600 "${KEY_FILE}" 2>/dev/null
         log_msg "generated web key -> ${KEY_FILE}"
     fi
-    # 桌面入口带免登 key（fnOS 用 iframe 打开，避免每次手输）
+    # 桌面入口带免登 key，且把实际监听端口写回（wizard 可能改了 launcher_port）
     sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"/?k=${k}\"|" "${TRIM_APPDEST}/ui/config" 2>/dev/null
+    sed -i "s|\"port\": \"[^\"]*\"|\"port\": \"${WEB_PORT}\"|" "${TRIM_APPDEST}/ui/config" 2>/dev/null
     printf '%s' "$k"
 }
 

@@ -20,6 +20,22 @@ Claude Code、Codex、OpenCode 等 Agent 统一换模型、统一走本地网关
 - HOME / XDG_* 全部重定向到 `$TRIM_PKGHOME`：供应商、密钥、订阅登录态都在 `$HOME/.config/magpie`，
   升级/重装不会丢。
 
+## 桌面入口方式：`type: url`，不是 `iframe`
+
+`ui/config` 的 `type` 决定飞牛怎么给小窗选路，三种形态后果完全不同：
+
+| 形态 | 典型应用 | 小窗地址 |
+| --- | --- | --- |
+| `type: iframe` + `gatewaySocket` + `gatewayPrefix` | quark、fn-seekbox、fndepot | 走飞牛自己的反代 `/app/<name>`，**不碰 fnos.net** |
+| `type: url` + 固定 `port` | hermes-studio、aistream、lunatv-enhanced | 浏览器直连 `<当前主机>:端口` |
+| `type: iframe` + 独立 `port`、无 gateway | 旧版本包、StirlingPDF | 飞牛分配给 `<app>-main.<nas-id>.fnos.net` |
+
+第三种入口由 `trim-connect`（飞牛远程访问）的 DDNS 记录驱动，指向飞牛的中转节点。客户端解析不到
+这个子域名时，小窗直接报「找不到服务器 IP 地址」——**跟应用本身是否启动无关**，直连 `IP:端口` 一直是好的。
+magpie 不支持监听 unix socket（`web --addr` 只接受 `host:port`），走不了第一种；所以本包用第二种，
+和 hermes-studio 一致。`cmd/main` 在启动时会把实际 `launcher_port` 写回 `ui/config` 的 `port`，
+避免 wizard 改端口后入口对不上。
+
 ## iframe 兼容补丁（重要）
 
 飞牛桌面是用 iframe 打开应用的，而 magpie 的响应带 CSP `frame-ancestors 'self'`，跨源祖先链会被
