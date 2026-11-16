@@ -82,6 +82,18 @@
               "size": 40256924
             }
           }
+        },
+        "0.1.4283": {
+          "changelog": "跟进上游 0.1.4283：模型/供应商面板与 Agent 适配更新，详见 https://github.com/yetone/magpie/releases/tag/v0.1.4283",
+          "updated_at": "2026-11-16T01:53:32Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/magpie-v0.1.4283/magpie-0.1.4283-x86.fpk",
+              "sha256": "f04a8ed4a0c61cbb884cda1044e7d9aa7864398826c01e86dad3ef8d25e1ac00",
+              "size": 40256856
+            }
+          }
         }
       }
     },
