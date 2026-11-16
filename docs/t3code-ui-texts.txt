@@ -1,0 +1,2099 @@
+/path/to/checkout
+3D view
+A comment is anchored to the whole change, so switch to All commits to write one.
+A long nested name
+A walk through the diff and what to read closely.
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+AGENT_DEVICE_DAEMON_AUTH_TOKEN
+AGENT_DEVICE_DAEMON_BASE_URL
+API key
+API keys, base URLs, and other per-instance CLI settings.
+Abort
+Accent color
+Accent color hue
+Accept
+Access
+Access goes to
+Accessibility
+Accessibility data
+Account
+Account name
+Actions
+Actions are project-scoped commands you can run from the top bar or keybindings.
+Active
+Activity
+Actual image size
+Ada
+Add
+Add T3 Connect
+Add a 1Password account, then pick it as the source of a provider variable.
+Add a CLIProxyAPI hub
+Add a comment…
+Add a project to start
+Add a project, and the pull requests from its repository appear here.
+Add a reaction
+Add a theme
+Add accent color for Kilo Code
+Add action
+Add actions declared by this checkout without editing them first.
+Add an optional comment...
+Add argument
+Add choice
+Add color
+Add custom model
+Add direct route
+Add environment
+Add filter
+Add generator
+Add hub
+Add keybinding
+Add model price
+Add option
+Add pairing link
+Add panel surface
+Add profile
+Add project
+Add project action…
+Add project base directory
+Add provider
+Add route
+Add source
+Add theme
+Add to PATH
+Add to another machine
+Add to chat
+Add variable
+Add words or phrases, separated by commas or line breaks
+Address
+Adjust the contrast of colors and borders across the interface.
+Advanced
+After
+After equation
+Agent access
+Agent browser access
+Agent device access
+Agent providers
+Agent token
+Agent tools are ready.
+Agents
+Alert text
+Alias
+All commits
+All environments
+All languages
+All providers
+Allow
+Allow agent control
+Allow agents to control devices
+Allow edits from maintainers
+Allowed
+Already asked
+Already available locally
+Already downloaded elsewhere? Paste the model file or folder path
+Already installed
+Already linked. Linking again renews it with the access you pick.
+Also include skills in the / command menu. Skills always appear when you type $.
+Always
+Amount
+Android fold controls
+Animate captured windows into your draft.
+Animate snapshots
+Annotated preview crop
+Another address…
+Another concurrent title
+Antigravity download
+Antigravity setup
+Any local files
+Any new activity un-settles a thread automatically.
+Anyone
+App
+Appearance
+Appearance mode
+Appended to the prompt for new and regenerated thread titles.
+Applied
+Apply instructions to all
+Apply to
+Applying settings for
+Applying…
+Approval
+Approve workflows to run
+Apps that require their own client ID cannot connect.
+Archive
+Archive entries
+Arguments
+Artifacts and logs
+Ask about this stop
+Ask an agent:
+Ask before deleting a thread and its chat history.
+Ask before unpinning a thread from the pinned section.
+Assistant reply
+AsyncResult.failure
+AsyncResult.initial
+At a time
+Atom.Atom
+Atom.make
+Attach files
+Attached files
+Attempted path
+Authenticated
+Authenticated as
+Author
+Authorized clients
+Auto
+Auto uses the environment’s GPU when it has one.
+Auto-settle
+Auto-settle inactive threads
+Auto-settle merged threads
+Auto-show floating preview
+Automatic
+Automatic installation unavailable. Set a binary path or use another environment.
+Automatic pricing after saving
+Automatic worktree cleanup
+Automatically balance load
+Automatically pull
+Automation
+Automations
+Available
+Average
+Back
+Back to app
+Back to pull requests
+Back to this thread's pull requests
+Backend + agents
+Background Activity
+Background activity
+Background activity profile
+Background policy details
+Background setup
+Background work
+Backspace
+Bars
+Base
+Base URL
+Base branch
+Before equation
+Behind upstream. Pull/rebase first.
+Beta
+Binary path
+Blank profile
+Blue & orange
+Bot comments
+Branch
+Branch changed from
+Branch naming instructions
+Branch prefix
+Branches
+Breakdown
+Bring back
+Browse
+Browse models by language
+Browser connection was refused.
+Browser device preset
+Browser device toolbar
+Browser dialog
+Browser page
+Browser recording frame rate
+Browsing
+Built-in
+CODEX_HOME path
+CPU
+CPU Time
+CPU average
+CPU speed limit
+Cache savings
+Cached input
+Can't find a setting? Keep this project picked above and hop to any other settings page.
+Cancel
+Cancel download
+Cancel editing queued message
+Cancel installation
+Cancel microphone test
+Cancel new keybinding
+Cancel sign-in
+Capture needs attention. Go back to check access.
+Captured HTML
+Captured terminal output
+Category
+Change accent color
+Change account
+Change in Sharing & access
+Change labels
+Change shortcut
+Changed
+Changes
+Changes can be cleanly merged.
+Chapter
+Chat width
+ChatGPT account
+ChatGPT account to connect
+ChatGPT shared usage
+ChatGPT sign-in redirect URL
+ChatGPT usage limit reached
+Check again
+Check details are out of date.
+Check details are out of date. Refresh the pull request to update them.
+Check out feature branch & continue
+Check provider versions
+Check simulator support
+Check this address
+Checked
+Checked unavailable
+Checking
+Checking T3 Connect…
+Checking file access...
+Checking for an API key…
+Checking the proxy and the firewall
+Checking the sign-in request
+Checking your connection
+Checking...
+Checking…
+Checkout path
+Checkouts
+Checks
+Child Processes
+Choice label
+Choice value
+Choices
+Choose Incremental
+Choose a color
+Choose a different file…
+Choose a project icon
+Choose a project icon file
+Choose a project to manage its name, icon, checkouts and actions.
+Choose a thread
+Choose all environments to edit the fallback model.
+Choose an agent
+Choose an icon, emoji, or monogram.
+Choose colors for additions and deletions, including change counts.
+Choose editor
+Choose file
+Choose files
+Choose files for the page
+Choose how new worktree branches are named from your first message.
+Choose icon
+Choose one environment to configure its telemetry exports.
+Choose project action
+Choose project icon
+Choose snooze date
+Choose the sound played when capture starts.
+Choose what the thread details card shows. You can also right-click the card.
+Choose what to show
+Choose when Enter sends a prompt or inserts a new line
+Choose when snoozed threads return to your inbox.
+Choose which
+Clean up transcripts
+Cleanup
+Cleanup instructions
+Cleanup model
+Clear
+Clear access token
+Clear agent token
+Clear cache
+Clear color
+Clear cookies
+Clear cookies and cache
+Clear data
+Clear search
+Clear settings search
+Clear thread search
+Click
+Client scopes
+Clone into host folders
+Clone it to work on it here, or start without a project.
+Clone over
+Clone protocol
+Clones go to github.com/owner/repo under the folder above, like ghq.
+Close
+Close composer
+Close device panel
+Close device toolbar
+Close find
+Close floating preview
+Close modal
+Close model test
+Close original terminal
+Close side chat
+Close stash
+Close the theme editor
+Close this page and start the sign-in again from your agent.
+Close tools
+Close with comment
+Coalesce key
+Coalesce window
+Code
+Code block actions
+Code blocks, diffs, and file previews.
+Code blocks, diffs, file previews, and the terminal.
+Code to approve
+Codex binary path
+Codex home path
+Codex runtime
+Codex setup
+Codex shadow home path
+Collapse
+Collapsed
+Collection health
+Collection time
+Color
+Color filter
+Colors
+Colors & themes
+Combine matching repositories across environments.
+Coming Soon
+Command
+Command output stream
+Command palette
+Commands that run in this project's checkout or its worktree, with optional shortcuts.
+Comment
+Comment on selected text
+Commit
+Commit and pull request writing
+Commit on new branch
+Commits
+Commits & pull requests
+Compact idle threads
+Compacting for
+Complete sign-in in your browser.
+Component
+Composer
+Composer mode
+Condition
+Configure advanced background activity
+Configure background activity
+Configure manually
+Configure non-secret routing. Headers are write-only.
+Confirm
+Confirm approve?
+Confirm thread archiving
+Confirm thread deletion
+Confirm thread unpinning
+Confirmations
+Confirming the dev server is running
+Connect
+Connect an environment first.
+Connect an environment to choose its review guide model.
+Connect an environment to choose its source control writer model.
+Connect an environment to choose its text generation model.
+Connect an environment to inspect its version control tools and hosting integrations.
+Connect an environment to manage scheduled tasks.
+Connect an environment to manage the secret providers its provider variables read from.
+Connect an environment to view its settings and access.
+Connect to an environment to import cookies
+Connect to an environment to remove this profile and its data.
+Connect to your server from your phone or tablet.
+Connected
+Connecting to T3 Connect
+Connecting your terminal
+Connecting...
+Connections
+Context
+Context window
+Continue
+Continue authentication
+Continue here
+Continue threads after restarts
+Continue with ChatGPT
+Contrast
+Controls whether background work may run after a subscribed interval fires.
+Copied
+Copy ID
+Copy MCP URL
+Copy as CSV
+Copy as Markdown
+Copy code
+Copy code & open GitHub
+Copy code only
+Copy command
+Copy command, for a terminal
+Copy diagnostics
+Copy file path
+Copy from…
+Copy ignored files
+Copy link
+Copy message
+Copy options from a built-in model
+Copy prompt link
+Copy request for admin
+Copy sign-in link
+Copy trace ID
+Copy update command
+Copy version
+Correction cue
+Cost
+Cost by speed
+Cost by type
+Could not check T3 Connect.
+Could not load T3 Chat link
+Could not load T3 Connect environments
+Could not load linked environments
+Could not load mobile clients
+Could not load pull requests
+Could not load scheduled tasks
+Could not open the link
+Could not play this recording. Try recording again.
+Couldn't finish this step. Try again or check Advanced for help.
+Couldn't load the WSL backend state.
+Couldn’t start a new thread
+Count
+Create a new link to share from this client.
+Create a new worktree
+Create a token
+Create link
+Create pairing link
+Create theme
+Creation
+Current
+Current CPU
+Current thread
+Current version of the application.
+Cursor account
+Custom
+Custom cleanup instructions
+Custom commit and pull request instructions
+Custom commit and pull request instructions for all selected environments
+Custom emoji
+Custom hex accent color
+Custom model prices
+Custom option
+Custom search URL
+Custom snooze
+Customize in Voice settings
+Custom…
+Cut off by a steer
+Danger
+Dark
+Database
+Date
+Date and time
+Days
+Days of inactivity before auto-settle
+Days to run
+Decline
+Decrease
+Decrease duration
+Decrease reading size
+Default
+Default automatic pull
+Default branch
+Default browser appearance
+Default browser viewport
+Default browser zoom
+Default choice
+Default diff file state
+Default distro
+Default permissions
+Default pull request merge method
+Default viewport height
+Default viewport width
+Default workspace
+Defaults to the hub's host name
+Delete
+Delete action
+Delete comment
+Delete inactive rotated log files after this many days. Current logs are kept.
+Delete inactive worktrees
+Delete merged worktrees
+Delete old browser artifacts
+Delete old rotated logs
+Delete settled worktrees
+Delete side chat
+Delete stashed prompt
+Delete unchanged worktrees
+Delete worktrees with deleted threads
+Deleting the thread also deletes this task.
+Deliveries
+Deregister
+Deregister server
+Description
+Desktop
+Desktop host signals not connected
+Destination
+Details
+Device controls
+Device hub
+Device sources
+Device stance
+Device tab name
+Device text size
+Device that runs this provider.
+Device tools
+Device unavailable
+Devices
+Diagnostics
+Dialog response
+Dictation shortcut
+Dictation shortcut mode
+Dictionary
+Diff colors
+Diff layout
+Diff options
+Different actions across environments
+Diffs
+Dimensions
+Disable
+Disable Tailscale HTTPS?
+Disable auto-merge
+Disable extension
+Disabled tasks stay saved but do not run.
+Discard
+Discard draft
+Discard pending line comments
+Discard this comment
+Disconnect
+Disconnect agent session
+Disconnect server
+Dismiss
+Dismiss Woke notification
+Dismiss device error
+Dismiss error
+Dismiss notification
+Dismiss provider update notice
+Dismiss question without answering
+Dismiss until provider status changes
+Dismiss voice input error
+Display
+Display name
+Displays the mobile sidebar.
+Docs
+Done
+Download
+Download and install
+Download as markdown
+Downloaded only
+Draft
+Draft attachment could not be saved locally and may be lost on navigation.
+Draft attachment may not persist
+Driver
+Drop files to attach
+Duplicate request key
+Duplicate theme
+Duration
+EAS Simulator
+EAS project
+Earlier output not shown
+Earlier preview content
+Earlier steps are not shown.
+Edge cards
+Edit
+Edit automation
+Edit citation comment
+Edit comment
+Edit description
+Edit from here
+Edit from here?
+Edit name and options
+Edit queued message
+Edit snooze options
+Edit theme
+Edit title
+Edited tracked files
+Editing in the composer
+Effect.Effect
+Effect.succeed
+Effort display
+Electron main process
+Emoji
+Enable Antigravity
+Enable Tailscale HTTPS
+Enable device hub
+Enable network access
+Enable snapshots
+Enable the device hub
+Enabled
+Encoding
+Endpoint the pairing QR code and URL use
+Enter
+Enter API key
+Enter a path relative to
+Enter a port from 1 to 65535.
+Enter an HTTP or HTTPS endpoint, or leave empty to disable export.
+Enter manually
+Enter registry agent
+Enter the password or verification code required by
+Environment
+Environment disconnected
+Environment identification
+Environment variable name 1
+Environment variable value 1
+Environment-wide setting. Select an environment to change it.
+Environments
+Error report
+Esc
+Essays project icon
+Even pace
+Event log
+Every interval
+Every layer being merged must be open and ready for review.
+Everything outside code blocks and the terminal.
+Excluded
+Exit full screen
+Expand composer
+Expand diagram
+Expanded
+Expo access token
+Export theme file
+Failed
+Failures
+Fast worktree checkout
+Favorites
+File explorer
+File path
+File picker
+File tree
+Files
+Files to attach
+Fill panel
+Filter by host
+Filter by involvement
+Filter by provider
+Filter by state
+Filter colors
+Filter comments
+Filter models
+Filters
+Find in PDF
+Find in thread
+Find open-source themes from Open VSX.
+Finish later
+Finish review
+Finish sign-in
+Fit image
+Fit width
+Fix login redirect
+Fix the expression above to continue editing visually.
+Flash captured window
+Flat
+Flat view
+Float device over chat
+Floating browser preview
+Floating device preview
+Fold device
+Fold shape
+Folder
+Follow pull request templates
+Follow-up behavior
+Follow-ups
+Follows the text generation model
+Font preview
+Font smoothing
+For example, t3 or t3/ produces t3/add-search. Leave empty for no prefix.
+For your safety, agent sign-ins cannot be approved inside another site.
+Foreground
+Fork from this response
+Forward
+From
+From t3.json
+From the thread's project
+Full
+Full file
+Gateway URL
+Get T3 Code
+Get help
+Get more tunnels
+Git action options
+Git actions
+Git fetch interval
+Glass opacity
+Go home
+Go to source
+Grant
+Granted scopes
+Group
+Grow
+Guest link
+Guest link expired
+Guest links
+HEX
+HTTPS
+HTTPS endpoint
+HTTPS port
+Handbook
+Harbor
+Hard reload
+Hardware
+Having trouble signing in?
+Header
+Headers
+Hidden slide
+Hide test files
+Hide this server's threads. Switch it on again in Environments.
+Hide whitespace changes
+Hide whitespace changes by default
+Higher values make menus, dialogs, and the composer more solid.
+Highlight mouse presses and held buttons in new recordings.
+Hold mode also quits on two quick presses.
+Home
+Host
+Host & collection
+Host diagnostics
+Host for the new repository
+Host power monitor
+Host state
+Host:
+Hours
+How the dictation shortcut starts and stops recording.
+Hub URL
+I've added the shortcut
+I/O reads
+I/O writes
+INT
+Icon
+Icon color
+Icon type
+Icons
+Identity file
+Identity:
+Idle
+Idle host monitor
+If sign-in doesn't return to T3 Code, paste the URL from the final localhost page.
+If the final localhost page does not load, paste its full URL here.
+Image attachment
+Import
+Import from
+Import from t3.json
+Import scripts
+Importing cookies
+Importing…
+In a separate worktree
+In this repository
+In use
+In-app notifications
+Inaccessible
+Inactivity does not settle threads with a pull request. Merge and close still do.
+Include app text in snapshots
+Include text and controls when the app makes them available.
+Included with T3 Code. No download needed.
+Increase
+Increase Contrast
+Increase duration
+Increase reading size
+Inherit
+Input
+Install and manage Antigravity.
+Install on an organization
+Installed
+Instance ID
+Instructions
+Instrumented application I/O
+Intel build on Apple Silicon
+Interface
+Interrupt
+Interval
+Into
+Invalid regular expression
+Involvement
+Its own folder and thread. Nothing you have open moves.
+Join
+Join a shared thread
+KILL
+Keep T3 Code open while the relay client is installed.
+Keep both
+Keep branch and worktree controls below the composer after a thread starts.
+Keep commit subjects under 60 characters. Keep pull request descriptions short and plain.
+Keep composer context visible in active threads
+Keep threads with a PR
+Keep worktrees with local changes
+Keybinding
+Kill
+Label
+Labels
+Labels loading
+Landscape
+Language
+Languages
+Last run
+Last selected
+Latest
+Latest Failures
+Latest turn
+Latitude
+Leave a comment
+Leave empty to auto-generate
+Leave this off to keep manual device controls without giving agents access.
+Leave toolbar
+Left
+Legal
+Letters
+Letters, digits, '-', or '_'.
+Level
+Light
+Light and dark theme variants
+Limit what the paired client can do.
+Limited permissions
+Limits
+Line comments are written from the whole change
+Link
+Link T3 Chat
+Link an environment
+Link pull request
+Linked
+Linked environments
+Linked pull requests unavailable
+Liquid Glass
+List edges
+Live Activities
+Live Processes
+Live preview
+Live process tree
+Live transcription
+Load earlier turns
+Load more pull requests
+Loading
+Loading breakdown
+Loading code...
+Loading commits...
+Loading deliveries…
+Loading delivery…
+Loading diff…
+Loading environments…
+Loading file
+Loading files…
+Loading folders...
+Loading folder…
+Loading hosts…
+Loading image
+Loading linked environments…
+Loading mobile clients
+Loading open-source notices…
+Loading output…
+Loading people
+Loading scheduled tasks…
+Loading sign-in terminal…
+Loading the rest of the file…
+Loading timeline
+Loading transcription models…
+Loading work history
+Loading…
+Local ACP command
+Local environment
+Local servers
+Location
+Location preset
+Logical Read
+Logical Write
+Logical bytes by operation
+Longitude
+Look closely
+Looking for browsers…
+Low power mode
+Mac mini
+Machine
+Machine over SSH
+Machine to add the project to
+Main composer
+Make this environment available to your other devices through T3 Connect.
+Manage access
+Manage on GitHub
+Manage scheduled tasks
+Manage tunnels
+Manage usage
+Managed relay client
+Management key
+Manual setup
+Manual update required
+Map to
+Mark environment variable DSH_PROFILE as sensitive
+Markdown editor mode
+Markdown preview
+Match case
+Match whole word
+Matched in the description
+Max Mem
+Meadow
+Medium Risk
+Memory
+Merge
+Merge stack
+Message
+Message New thread
+Microphone
+Microphone input level
+Minutes
+Misspelling
+Mobile clients
+Mobile devices that get notifications from your environments.
+Model
+Model ID
+Model prices
+Models
+Modified
+Monitor overhead
+Monogram
+Monospace font
+More
+More actions for this machine
+More agents in the ACP Registry
+More approval options
+More composer controls
+More device actions
+More info
+More matches available. Refine your search.
+More providers
+More rows
+More saved output
+More thread actions
+Most Common Failures
+Move down
+Move up
+Name
+Narrow your search to find more pull requests.
+Native
+Native process monitor
+Native sessions
+Navigate
+Navigation
+Negate group
+Network
+New
+New keybinding
+New model
+New model ID
+New profile
+New projects
+New session
+New task
+New thread
+New thread in
+Next
+Next match
+Next matching page
+Next media
+Next page
+Next rows
+Next run
+Next slide
+Next stop
+Nightly
+No T3 Connect environments
+No actions configured.
+No active thread
+No active threads found.
+No activity in this window.
+No activity yet.
+No agents yet
+No checks reported
+No checks reported.
+No comments yet.
+No commits on this branch.
+No compatible agents found
+No completed turns yet.
+No custom options. The composer uses the provider's default options.
+No effort levels
+No environment selected
+No environments available
+No environments connected.
+No events yet.
+No fonts found.
+No hubs configured.
+No icons found.
+No installed editors found
+No instrumented application I/O has been recorded yet.
+No keybindings match your search.
+No languages match.
+No licenses match that search.
+No linked environments
+No linked pull requests
+No matches found.
+No matches.
+No matching files.
+No matching languages.
+No matching projects.
+No matching refs.
+No mobile clients
+No models match.
+No output.
+No pairing links or client sessions.
+No preview for this file
+No preview yet
+No projects in this workspace
+No projects yet
+No provider on the selected environments reports subscription limits.
+No providers available
+No refs found.
+No requests yet.
+No retained process samples in this window.
+No saved remote environments
+No scheduled tasks
+No secret providers configured.
+No settings found
+No supported browsers found
+No supported open-source themes found
+No tasks match this environment and project selection.
+No terminal sessions for this thread yet.
+No text generation providers available.
+No text generators yet
+No threads found.
+No transcript yet.
+No transcription model matches.
+None
+North
+Not
+Not now
+Notes on this stop
+Nothing to preview.
+Notice details
+Notices for dependencies, assets, and optional tools used by T3 Code.
+Notifications
+Off
+Offline
+On OpenAI, sign in with the account you choose here.
+On an environment
+On webhook
+Once
+One literal argument per row, in launch order.
+One moment while this environment verifies the agent's request.
+One moment while your account loads.
+One or two letters or numbers.
+Only UTF-8 text and images can be opened inside an archive.
+Only a session that manages access here can answer this.
+Only approve a sign-in you just started.
+Only the box you write prompts in. Mono works well here.
+Only these changes will be saved. We'll keep a backup.
+Open
+Open DevTools
+Open Environments
+Open a project to search its files.
+Open a surface
+Open activity on host
+Open an app first.
+Open app
+Open automation
+Open browser
+Open browser in a profile
+Open chat
+Open diff
+Open docs
+Open f
+Open file in preview browser
+Open full screen
+Open in Code
+Open in browser
+Open in editor
+Open in right panel
+Open in system browser
+Open in…
+Open it again
+Open keybindings.json
+Open links in
+Open logs folder
+Open parent
+Open preview
+Open preview automatically when this action runs
+Open preview in right panel
+Open provider setup
+Open pull requests and changes panels proactively
+Open pull requests in T3 Code
+Open sign-in page
+Open stash
+Open subagent
+Open subagent thread
+Open terminal
+Open the full diff
+Open this URL in the in-app preview when this action runs.
+Open this page in its own window
+Open thread
+Open-source notices are unavailable
+OpenRouter model
+OpenTelemetry export
+Opening microphone…
+Opening the link...
+Operation
+Option id
+Option label
+Option type
+Optional
+Optional marker shown in the picker.
+Optional. Resolved separately on each environment.
+Options shown in the composer
+Or choose from ACP Registry
+Or download the desktop app
+Or paste any emoji
+Or use your own credentials
+Orchid
+Order of projects in the sidebar project picker and command palette.
+Organization
+Orientation
+Original outlook
+Other folders
+Other ways to connect
+Outdated
+Output
+Outside rename
+Overlay element frames
+Overridden by
+Overridden for this project
+Overridden for this project. Show where this value comes from
+PAIRCODE
+PDF document
+PID
+PID + start time
+Page
+Page 1
+Page 2
+Page not found
+Page zoom applied to new browser tabs.
+Pair with this environment
+Pairing code
+Pairing link scopes
+Pairing link. Scan to open on another device
+Pairing token
+Pairing with this environment
+Pairing...
+Panel animation duration
+Parent folder
+Parse Errors
+Partial
+Paste a code
+Paste a full pairing URL here to fill both fields automatically.
+Paste a one-time token or pairing secret
+Paste an emoji
+Paste the URL from the sign-in tab
+Paste the code
+Path
+Path to a model file or folder already on this environment
+Peak
+Peak CPU
+Peak Mem
+Pending. Sent when you submit the review
+Permissions
+Personal
+Phone
+Pick a thread to continue
+Pick where to host it, then point us at a repo to push to.
+Pin
+Pin project
+Pinned
+Pinned projects come first in project pickers.
+Plan
+Plan actions
+Planning PDF
+Play Click
+Play Whoosh
+Poll host power state when no foreground client is active.
+Poll host power state while clients are active.
+Popular
+Port
+Portrait
+Power off
+Power source
+Prefix
+Premium
+Preparing image
+Preparing managed setup.
+Preparing sign-in.
+Preset…
+Press Shift+Escape to leave the browser page.
+Press a shortcut. Use
+Press shortcut
+Press your shortcut. Esc cancels.
+Preview
+Preview limited to the first 1 MB.
+Preview limited. Save it or open it in another app to read the full document.
+Preview menu
+Preview unavailable
+Previous
+Previous match
+Previous media
+Previous page
+Previous question
+Previous rows
+Previous slide
+Previous stop
+Previous worktree
+Prices and mappings apply to all past and future usage on the environments you select.
+Process
+Process count
+Process history period
+Process scan
+Processed tokens
+Processes
+Profiles separate cookies and logins. Incognito data is cleared when the app closes.
+Project
+Project actions
+Project for ACP providers
+Project for ACP sessions
+Project grouping
+Project icon
+Project name
+Project order
+Project scripts
+Project source
+Projects
+Promise
+Prompt
+Protocol
+Provider
+Provider default
+Provider health interval
+Provider process is gone. Interrupt or restart the child thread to respond.
+Provider process is gone. Interrupt or restart the run to respond.
+Provider settings
+Provider setup is read-only.
+Provider sign-in terminal
+Providers
+Publish agent activity
+Publish failed
+Publish repository
+Publish repository...
+Publish result unavailable.
+Publish this environment
+Publishing...
+Pull request URL or #42
+Pull request description
+Pull request tabs
+Pull request video
+Pull requests
+Pull requests unavailable
+Push notification
+Push notifications
+Query
+Questions to consider
+Queue
+Quit shortcut behavior
+RGB
+Reach this machine via
+Reachable at
+Reaches repositories in accounts and organizations that installed the app.
+Read
+Read Total
+Read more
+Read only
+Read only. These subagents cannot take messages.
+Read throughput
+Read-only connection. Unsaved edits are kept until write access returns.
+Read-only. Up to 50 columns and 1,024 characters per cell. Blob contents are omitted.
+Read/s
+Reading device settings…
+Ready
+Ready for review
+Rebase stack
+Recent requests to this task's webhook URL.
+Recently used
+Recents
+Reclaim freed database space
+Recommended
+Reconnect
+Reconnect ChatGPT
+Reconnect this device to set up its provider, or select another device.
+Reconnect this environment before saving.
+Reconnecting preview…
+Record again
+Recording playback position
+Recording time
+Recordings
+Reduce Motion
+Reduce Transparency
+Refresh
+Refresh devices
+Refresh failed. Retry
+Refresh microphones
+Refresh process diagnostics
+Refresh provider status
+Refresh provider status, versions, and models in the background. Set to 0 to disable.
+Refresh pull requests
+Refresh remote branch status in the background.
+Refresh resource history
+Refresh resource telemetry
+Refresh telemetry snapshot
+Refresh trace diagnostics
+Refresh workspace files
+Regenerating title
+Reinstall helper
+Reject requests without a valid HMAC-SHA256 signature of the body.
+Related threads
+Relaunch
+Relay client installation progress
+Release the model’s memory on the environment after it sits idle.
+Reload
+Reload app
+Remember my choice
+Remote
+Remote only
+Remove
+Remove agent credits when merging
+Remove capture helper
+Remove choice
+Remove connection
+Remove custom model
+Remove downloaded runtime
+Remove filler words
+Remove filler words like “um” and “uh” from transcripts.
+Remove from draft
+Remove from queue
+Remove from this device
+Remove hub
+Remove key
+Remove key…
+Remove profile and data
+Remove project
+Remove provider
+Remove queued message
+Remove route
+Remove shortcut…
+Remove worktrees with no commits beyond the default branch.
+Render math
+Replay panel animation preview
+Reply
+Reply to this conversation
+Report
+Repository
+Request a review
+Requests with the same key run only once within 7 days.
+Require a second click on the inline archive action before a thread is archived.
+Require signature
+Required
+Rescan Git and hosting integrations
+Rescan server environment
+Research
+Reset
+Reset all
+Reset reading size
+Reset to default
+Reset zoom
+Resets
+Resident memory
+Resize browser viewport from bottom edge
+Resize browser viewport from bottom-left corner
+Resize browser viewport from bottom-right corner
+Resize browser viewport from left edge
+Resize browser viewport from right edge
+Resolved
+Resolved or dismissed
+Resource History
+Resource history period
+Resource monitor
+Resource timeline
+Response streaming
+Responsive
+Restart and reclaim
+Restart to update
+Restarting…
+Restarts
+Restore 3D view
+Restore device defaults
+Restored PDF
+Restores
+Results
+Resume
+Resume after usage limits
+Resume agent-owned conversations as T3 threads.
+Retry
+Retry loading API key
+Retry loading folder
+Retry loading models
+Retry monitor
+Retry now
+Retry setup status
+Retry stack lookup
+Retry stack refresh
+Revert and keep changes
+Revert files too
+Review
+Review changes
+Review dismissed
+Review guide instructions
+Review guides
+Review summary
+Review tour
+Review verdict
+Review what runs on this environment before using simulators and emulators.
+Reviewers
+Reviewers loading
+Revised outlook
+Revoke
+Rich text composer
+Rotate
+Rotate device
+Rotate to…
+Rotate viewport
+Run
+Run WSL only
+Run `t3 connect link` on the host, then restart T3 Code there.
+Run at
+Run automatically on worktree creation
+Run every
+Run every request
+Run in terminal
+Run in the thread's worktree when the thread settles
+Run interrupted
+Run now
+Run on
+Run on your computer:
+Run only the WSL backend. T3 Code restarts when this changes.
+Running
+Runs on
+Runs on its own
+Runtime
+SSH
+SSH config default
+SSH host or alias
+SSH options
+SSH target
+SSH verification required
+Safe details
+Same on all machines
+Samples
+Save
+Save icon
+Save plan to workspace
+Save securely
+Save to workspace
+Saved outputs only. Code is never executed.
+Saved viewport
+Saving
+Saving…
+Scan
+Scan with your phone camera.
+Scan with your phone to get the app.
+Schedule
+Schedule type
+Scheduled tasks
+Screen reader announcements
+Screenshot saved
+Screenshot unavailable
+Script actions
+Scroll panel tabs
+Scroll tabs left
+Scroll tabs right
+Search
+Search ACP Registry
+Search Lucide icons
+Search Open VSX themes
+Search agents…
+Search all Lucide icons
+Search all threads...
+Search authors
+Search commands
+Search community themes
+Search engine
+Search failed
+Search files
+Search fonts…
+Search hosts or type devbox
+Search keybindings
+Search labels
+Search languages
+Search licenses
+Search models
+Search models...
+Search open-source licenses
+Search or enter URL
+Search project contents
+Search projects
+Search projects...
+Search pull requests
+Search pull requests, or label:bug
+Search refs...
+Search registry
+Search settings
+Search themes...
+Search threads
+Search threads or projects...
+Search transcription models
+Searching messages…
+Searching the registry...
+Searching themes...
+Searching…
+Secret
+See your agents, import projects, and set up your phone.
+Segment
+Select a live local server to open it in this browser tab.
+Select a project
+Select a thread to inspect turn diffs.
+Select all
+Select an existing thread or create a new one to get started.
+Select at least one permission.
+Select none
+Selected
+Selected by T3 Code.
+Selected model
+Send
+Send SIGINT
+Send SIGKILL
+Send a message to start the conversation.
+Send now
+Send shortcut
+Sending attachment
+Sent by T3 Code
+Separate fonts
+Server
+Server PID
+Server environment
+Servers
+Service
+Session
+Set
+Set as default
+Set how fast panels open and close.
+Set how wide messages and the composer can grow on large screens.
+Set price
+Set the prompt, code, and terminal fonts separately instead of one monospace font.
+Set up
+Set up T3 Connect
+Set up Tailscale HTTPS?
+Set up another way
+Set up devices
+Set up one agent to start.
+Set up voice input
+Set whether the diff panel ignores whitespace-only edits by default.
+Setting up
+Settings
+Settings file
+Settings sections
+Settle
+Settle thread
+Settled
+Setup
+Setup Required
+Setup progress
+Setup required
+Setup unavailable
+Shadow home path
+Share
+Share with guest
+Shared Codex config, sessions, and state.
+Shared background policy
+Shared policy
+Sharing & access
+Sheet
+Sheets
+Shortcut
+Shortcut changes
+Shortcut permissions
+Shot
+Show
+Show Borders
+Show a gentle cue on the captured window.
+Show all environments
+Show app
+Show details
+Show diffs stacked or side by side. The toggle in the diff toolbar changes this too.
+Show error
+Show folder threads on two lines: the title, then the branch, pull request, and agent.
+Show formatted Markdown as you type.
+Show in thread details
+Show key presses in recordings
+Show models
+Show mouse presses in recordings
+Show pressed keys and shortcuts in new recordings. Password fields are excluded.
+Show reasoning effort in the composer as its name, such as High, or as bars.
+Show skills in slash menu
+Showing access for
+Showing the first 1,024 columns. Source and Save retain every column.
+Shown in the provider list and model picker.
+Shown in the provider list.
+Side chat composer
+Sidebar
+Sidebar threads with no activity for this long settle automatically.
+Sidecar
+Sign in
+Sign in to ChatGPT
+Sign in to T3 Connect
+Sign in to T3 Connect here, then in the app with the same account.
+Sign in to T3 Connect with the account this environment is linked to.
+Sign in to approve
+Sign out
+Sign-in code
+Sign-in method
+Sign-in step
+Signature verified
+Signed in
+Signed in as
+Silence filtering
+Simlock
+Simlock device hosts
+Size
+Skip
+Skip requests older than
+Skip the install if you already have
+Skipped
+Slide
+Slow Spans
+Slowest Spans
+Snooze
+Snooze for
+Snooze thread
+Snooze until limits reset
+Snoozed
+Some environments could not report usage
+Some of this diff was not shown
+Some workspace entries are not shown.
+Something else…
+Something went wrong.
+Sort
+Sort by
+Sort pull requests
+Sort themes
+Source
+Source control providers
+Span
+Span Logs
+Spans
+Speak any language and get English text.
+Speaker notes
+Speech model download progress
+Split
+Split diff view
+Stable
+Stacked
+Stacked diff view
+Stacked pull request
+Standard
+Start Phone
+Start dictating
+Start from remote
+Start new worktrees from remote by default
+Start voice input
+Start with files expanded or collapsed when opening diffs or a pull request's Code tab.
+Start without a project
+Start without an agent
+Start worktree from remote
+Stash
+Stashed prompts
+State
+Status
+Steer
+Stop entire workflow
+Stop generation
+Stop recording
+Stop server
+Stop sharing
+Stop subagent
+Stop this action when the thread settles
+Subagent work
+Submit
+Suggest next prompt
+Switch branch
+Switch to
+Switch to Windows
+Switches the branch you are working in.
+Switches the hosted app release channel.
+System default
+System default follows your browser or OS clock preference.
+T3
+T3 Chat
+T3 Code
+T3 Code also reads any files included by this file.
+T3 Code app for iPhone and Android
+T3 Code home
+T3 Code will restart the local backend without Tailscale Serve.
+T3 Connect
+T3 Connect is on for this computer. Sign in to the app with the same account.
+T3 Connect settings
+T3 Connect tunnels in use
+T3 system footprint
+Table
+Take control to respond.
+Tall preview
+Task unavailable
+Technical details
+Terminal
+Terminal font preview
+Terminal input
+Terminal output, independent from code blocks and diffs.
+Terminate
+Test
+Test PR
+Test connection
+Test microphone
+Test model
+Test pull request
+Test transcript
+Text and images. Layout and embedded objects may differ from the original.
+Text generation
+Text size
+The URL appears after you save.
+The app or capture backend did not provide verified accessibility data.
+The browser may claim some shortcuts first. The desktop app receives them all.
+The code expired.
+The color scheme pages are told to prefer. System follows your OS setting.
+The diagram renderer failed to load.
+The host withheld part of this diff: a binary file, or a change too large to inline.
+The hosts were searched for it. Try fewer words, or search by number, author or branch.
+The line is where even spending would be.
+The linked item is not in the loaded activity.
+The owner approves each message
+The owner sees your name and approves each message before the agent gets it.
+The project is still available. Try opening the draft again.
+The provider has no record of which subagents this call started.
+The provider recorded file content without a diff.
+The quick brown fox jumps over the lazy dog.
+The rest of this diff could not be loaded.
+The shared name for this project group in the sidebar and thread lists.
+Theme JSON
+Theme appearance
+Theme file
+Theme name
+Then
+Thermal
+These ticks are kept here, not on the host
+Third-party notices
+This T3 Connect server does not support T3 Chat linking.
+This action cannot be undone.
+This app
+This change has no files to tour.
+This checkout is no longer available in the selected project and environment.
+This choice applies only to this device. Choose Off to stop sharing.
+This client can create or revoke access for other devices.
+This connection can create access links but cannot view authorized clients.
+This count covers only part of the change
+This database has no readable tables.
+This device
+This driver has no required configuration. You can add the instance now.
+This file has been pushed to since you marked it viewed.
+This file is empty.
+This folder is empty.
+This folder is no longer available.
+This forgets its pairing, credentials, and cached threads here.
+This instance uses
+This link has ended
+This link has ended or is not valid
+This link is open
+This machine is on your T3 Connect account. Use it as a fallback route.
+This may take a moment.
+This model is not supported with a ChatGPT account.\nChoose another model.
+This notebook is empty.
+This prompt had hidden characters, it may be malicious
+This scheduled task no longer exists.
+This sheet is empty.
+This side chat was deleted.
+This sign-in cannot continue
+This sign-in link is incomplete
+This slide could not be drawn.
+This tab is open in the T3 Code desktop app.
+This table is empty.
+This task was deleted or belongs to a different project. Check your project filter.
+Thread
+Thread notifications
+Thread search results
+Thread title
+Thread title instructions
+Threads
+Time
+Timeline action
+Timestamp format
+Tinted
+Toggle
+Toggle Sidebar
+Toggle favorite
+Toggle main sidebar
+Toggle right panel
+Toggle task
+Toggle terminal drawer
+Toggle thread details panel
+Token
+Tokens
+Tokens by type
+Tool calls
+Tool calls in chat
+Tool output image
+Tools
+Top Span Names
+Total
+Totals
+Totals are partial while selected environments scan.
+Trace
+Trace Diagnostics
+Transcribe with
+Transcription
+Transcription hardware
+Transcription language
+Transcription models
+Transcription options
+Translate
+Translate to English
+Troubleshooting
+Try a broader search.
+Try again
+Try sign-in in your browser
+Try:
+Tune the shared power policy and the background intervals that feed it.
+Turn
+Turn diffs are unavailable because this project is not a git repository.
+Turn on
+Two colors, rest derived
+Two-line folder rows
+Type
+Typography
+Typography.tsx
+URL
+USD / million tokens
+Un-settle
+Un-settle thread
+Unable to load audio.
+Unable to load file preview.
+Unable to load image.
+Unable to load workspace image.
+Unavailable
+Unavailable selection
+Uncached input
+Uncommitted
+Uncommitted changes
+Unfold device
+Unit
+Unload model
+Unpin
+Unpin thread
+Unpriced
+Unpriced usage details
+Unsafe link
+Unsent draft
+Update
+Update all
+Update existing
+Update ready to download
+Update release notes
+Update required
+Update the desktop app on that machine to update this server.
+Update the selected machines to configure project worktree cleanup.
+Update theme
+Update this environment to manage Antigravity.
+Update track
+Updated
+Updates
+Upgrade on T3 Chat
+Usage
+Usage breakdown
+Usage breakdown by time
+Usage limits
+Usage metric
+Usage period
+Use
+Use %s where the search terms go.
+Use Kilo Code
+Use T3 Code on your phone
+Use T3 desktop for automatic return
+Use a different account
+Use a reset credit?
+Use a separate cleanup model
+Use a separate review guide model
+Use a separate source control writer model
+Use a sign-in code instead
+Use a specific checkout
+Use active login
+Use advanced theme colors
+Use another account
+Use credit
+Use existing
+Use existing CLI
+Use global default
+Use local command
+Use model
+Use regular expression
+Use template
+Use the built-in instructions or write your own.
+Use the project checkout
+Use the repository's pull request template when it has one.
+Use thinner grayscale text smoothing instead of the macOS default.
+Use without project
+Used for new threads when the default model's provider is out of usage.
+User message
+Username
+Uses the custom binary path below. Installation keeps that path.
+Using CURSOR_API_KEY. Remove it from this provider's environment to use browser sign-in.
+Using ChatGPT plan
+VARIABLE_NAME
+Validating the pairing link and preparing your session.
+Value
+Variables
+Version
+Version Control
+Versions have not been checked.
+View diagnostics
+View instructions
+View licenses
+View on host
+View policy
+View usage in ChatGPT with your connected account.
+Viewed
+Viewport dimensions
+Viewport height
+Viewport width
+Visibility
+WSL backend
+WSL is unavailable, so Windows is running instead. Turn WSL off to clear this preference.
+WSL only
+Wait for it to finish before the agent starts
+Waiting for approval
+Waiting for collector health.
+Waiting for device video…
+Waiting for host state
+Waiting for sample
+Waiting for the native process monitor.
+Waiting for your computer…
+Wake
+Wake thread now
+Watching
+Webhook URL
+Welcome to T3 Code
+What agents here may do there
+What it may do
+What should the agent do each time this runs?
+What should we build
+What should we build in
+What should we work on?
+What the address bar searches when you type something that isn't a URL.
+What to try
+What went wrong?
+When
+When expression
+Which app?
+Whoosh
+Wide
+Woke
+Woke from snooze
+Work locally
+Workflow started
+Working
+Working for
+Working section
+Workspace
+Workspace path
+Worktree branch naming
+Worktree location
+Worktree setup
+Worktree submodules
+Wrap code, diffs, and file previews by default
+Wrap lines
+Wrap long lines in code blocks, diffs, and file previews by default.
+Write
+Write Total
+Write custom instructions for all
+Write the instructions each selected environment should use.
+Write throughput
+Write/s
+You
+You are signed out of its sites. Server browser tabs open in this profile close now.
+You can use either platform. Fixing a missing platform does not block the other one.
+You're currently checked out on another branch.
+Your ChatGPT plan is connected
+Your T3 Connect account is out of tunnels.
+Your name
+Your phone can reach this computer. Sign in to the app with the same account.
+Your ticks could not be read
+Zoom
+Zoom in
+Zoom out
+active host power interval
+add project base directory
+agent credit removal
+archive confirmation
+auto-settle on merge
+auto-show floating preview
+background activity
+branch naming
+branch naming instructions
+branch prefix
+browser recording frame rate
+bun test
+café
+chat width
+clone into host folders
+commit and pull request writing
+compact idle threads
+composer context
+container.querySelector
+container.querySelectorAll
+contentRef.current?.querySelector
+continue threads after restarts
+default automatic pull
+default browser access
+default browser appearance
+default browser viewport
+default browser zoom
+default diff file state
+default merge method
+default model
+default permissions
+default workspace
+delete confirmation
+diff colors
+diff layout
+diff whitespace changes
+document.querySelector
+e.g. Check for Sentry issues
+e.g. Living room iPad
+e.g. Personal or Work
+e.g. Work
+echo hi
+echo html
+effort display
+environment identification
+fallback model
+file.byteLength
+file.sizeBytes
+first block
+follow-up behavior
+font smoothing
+git clone
+glass opacity
+hello world
+iPhone Duo stands
+idle host power interval
+is this gateway.
+left.runtimeTabId
+link target
+macOS, Linux
+matched in the description
+math rendering
+nested block
+nested note
+new Map
+new Promise
+new Set
+new worktrees start from remote
+on settle
+on this machine.
+only html
+open pull requests in T3 Code
+or import a file
+or start without a project
+or, update manually using
+panel animations
+preview · desktop only
+privacy policy
+private note
+proactive panels
+project grouping
+project icon
+project name
+project order
+provider health check interval
+provider health interval
+provider update checks
+pull request templates
+quit shortcut behavior
+receives changes from
+response streaming
+restarts last
+retained caption
+review guide instructions
+revised from 120
+rich text composer
+screen reader announcements
+screen.container.querySelector
+screen.container.querySelectorAll
+search engine
+second block
+send shortcut
+simlock --gateway token create --role agent
+skills in slash menu
+snooze options
+src/
+styled body
+styled cell
+t3 auth pairing create
+t3.json is invalid
+text generation model
+thread details
+thread title instructions
+time format
+tool calls in chat
+unpin confirmation
+user@host or SSH alias
+with an HTML
+word wrapping
+working section
+worksheet value
+worktree location
+worktree submodules
