@@ -217,6 +217,18 @@
               "size": 150408313
             }
           }
+        },
+        "0.1.9-4": {
+          "changelog": "跟进上游 0.1.9：编码 Agent 控制面、配对与远程访问改进，详见 https://github.com/pingdotgg/t3code/releases/tag/v0.1.9",
+          "updated_at": "2026-11-11T11:33:49Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.9-4/t3code-0.1.9-4-x86.fpk",
+              "sha256": "34c4deb499f34b949e33a638f06fb99a5d6b05e1850fe5adaac7bb4bb1811a7d",
+              "size": 150423711
+            }
+          }
         }
       }
     }

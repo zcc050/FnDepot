@@ -4,6 +4,7 @@ source "$(dirname "$0")/common"
 
 start_app() {
     stop_bg
+    apply_zh_patch
     start_bg "${SERVER_DIR}/t3/t3" serve --port "${launcher_port:-3773}" --host 0.0.0.0 --lan \
         --base-dir "${TRIM_PKGHOME}/.t3" --no-browser || return 1
     # 桌面入口用长期配对码免登录；mint 失败时退回启动日志里的那个（短时效）

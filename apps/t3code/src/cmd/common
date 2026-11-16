@@ -93,6 +93,23 @@ for k in ("token", "pairingToken", "secret"):
     [ -n "$tok" ] && printf '%s' "$tok"
 }
 
+# 上游没有 i18n（中文 PR 未合并），界面文案直接写在打包产物里。
+# 启动前按 cmd/zh-CN.json 精确替换 UI 属性上的字符串，幂等；升级换包后会自动重打。
+apply_zh_patch() {
+    local assets="${TRIM_APPDEST}/server/t3/client/assets" here
+    [ -d "$assets" ] || return 0
+    [ "${T3CODE_NO_ZH:-}" = "1" ] && { log_msg "zh patch skipped (T3CODE_NO_ZH=1)"; return 0; }
+    command -v python3 >/dev/null 2>&1 || { log_msg "WARN 没有 python3，跳过汉化补丁"; return 0; }
+    here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    [ -f "${here}/patch-zh.py" ] || return 0
+    if python3 "${here}/patch-zh.py" "$assets" >>"${LOG_FILE}" 2>&1; then
+        tail -1 "${LOG_FILE}" | grep -q '已替换 0 处' && log_msg "zh patch: 已是最新" || true
+    else
+        log_msg "WARN 汉化补丁执行失败（应用照常启动）"
+    fi
+    return 0
+}
+
 set_url() {  # set_url <path[?query]> -> rewrite the desktop entry's url
     local cfg="${TRIM_APPDEST}/ui/config"
     sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"$1\"|" "$cfg"
