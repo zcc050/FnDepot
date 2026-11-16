@@ -1,0 +1,239 @@
+#!/bin/bash
+# =============================================================================
+# FnDepot 自动更新流水线
+# -----------------------------------------------------------------------------
+# 做的事：检查上游稳定版 → 有新版就构建 fpk → 结构校验 → 真机冒烟
+#        → 重建 fnpack.json → 源校验 → 提交推送 → 建 Release 并上传 → 校验下载
+#
+# 任一环节失败都不会发布（保留本地产物与日志，方便排查）。
+#
+# 用法：
+#   bash scripts/auto_update.sh                 # 检查 + 构建 + 发布
+#   bash scripts/auto_update.sh --dry-run       # 只看有没有更新
+#   bash scripts/auto_update.sh --no-publish    # 构建到本地，不提交/不发布
+#   bash scripts/auto_update.sh --only magpie    # 只处理某个应用
+#   bash scripts/auto_update.sh --arch arm       # 只处理 arm 产物
+#   bash scripts/auto_update.sh --allow-dirty    # 允许工作区有未提交改动（默认拒绝，避免混提交）
+#
+# 退出码：0 正常（含“无需更新”）；1 构建/校验失败；2 环境问题；3 发布失败
+# =============================================================================
+set -uo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+LIB="${ROOT}/scripts/lib.sh"
+STATE_DIR="${ROOT}/.auto-update"
+mkdir -p "$STATE_DIR"
+LOG="${STATE_DIR}/auto-update-$(date +%Y%m%d).log"
+LOCK="${STATE_DIR}/lock"
+
+DRY=0; PUBLISH=1; ONLY=""; ARCH=x86; ALLOW_DIRTY=0
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --dry-run)     DRY=1 ;;
+        --no-publish)  PUBLISH=0 ;;
+        --only)        ONLY="${2:?--only 需要应用名}"; shift ;;
+        --arch)        ARCH="${2:?--arch 需要 x86|arm}"; shift ;;
+        --allow-dirty) ALLOW_DIRTY=1 ;;
+        -h|--help)     sed -n '2,20p' "$0"; exit 0 ;;
+        *) echo "未知参数: $1" >&2; exit 2 ;;
+    esac
+    shift
+done
+case "$ARCH" in x86|arm) ;; *) echo "--arch 只支持 x86|arm" >&2; exit 2 ;; esac
+
+exec 9>"$LOCK"
+if ! flock -n 9; then
+    echo "另一个 auto_update 正在运行（$LOCK），退出"
+    exit 0
+fi
+
+log() { printf '%s %s\n' "$(date '+%F %T')" "$*"; }
+log "===== auto_update 开始 arch=${ARCH} dry=${DRY} publish=${PUBLISH} only=${ONLY:-all}"
+
+cd "$ROOT" || exit 2
+
+# 工作区必须干净，否则自动提交会混进无关改动
+if [ "$PUBLISH" = "1" ] && [ "$DRY" = "0" ] && [ "$ALLOW_DIRTY" = "0" ]; then
+    if [ -n "$(git status --porcelain)" ]; then
+        log "FAIL 工作区有未提交改动，拒绝自动发布（用 --allow-dirty 或先提交）"
+        exit 2
+    fi
+fi
+
+# 需要 token 才能发布
+if [ "$PUBLISH" = "1" ] && [ "$DRY" = "0" ]; then
+    if ! printf 'protocol=https\nhost=github.com\n\n' | git credential fill 2>/dev/null | grep -q '^password=' \
+       && [ -z "${GH_TOKEN:-}${GITHUB_TOKEN:-}" ]; then
+        log "FAIL 拿不到 GitHub token（git credential / GH_TOKEN）"
+        exit 2
+    fi
+fi
+
+vercmp() {  # vercmp A B -> 0 if A>B
+    python3 - "$1" "$2" <<'PY'
+import re, sys
+def k(v): return tuple((0, int(p)) if p.isdigit() else (1, p) for p in re.split(r"[.\-+]", v))
+sys.exit(0 if k(sys.argv[1]) > k(sys.argv[2]) else 1)
+PY
+}
+
+apps=()
+for f in "$ROOT"/apps/*/build.sh; do
+    a="$(basename "$(dirname "$f")")"
+    [ -n "$ONLY" ] && [ "$a" != "$ONLY" ] && continue
+    apps+=("$a")
+done
+[ "${#apps[@]}" -gt 0 ] || { log "FAIL 没有找到任何应用"; exit 2; }
+
+updated=()
+failed=()
+port=18400
+for app in "${apps[@]}"; do
+    port=$((port+2))
+    local_ver=$(python3 -c "
+import json,sys
+try: print(json.load(open('$ROOT/apps/$app/dist/$ARCH.json'))['version'])
+except Exception: print('')
+" 2>/dev/null)
+    up_line="$(timeout 150 bash "$LIB" version "$app" 2>/dev/null | head -1)" || up_line=""
+    up_ver="${up_line%% *}"
+    if [ -z "$up_ver" ]; then
+        log "WARN $app 取不到上游版本，跳过"
+        failed+=("$app:version")
+        continue
+    fi
+    if [ -n "$local_ver" ] && ! vercmp "$up_ver" "$local_ver"; then
+        log "OK   $app 已是最新 $local_ver（上游 $up_ver）"
+        continue
+    fi
+
+    log "----- $app: 本地 ${local_ver:-无} -> 上游 $up_ver"
+    if [ "$DRY" = "1" ]; then
+        log "  (dry-run) 需要构建 $app $up_ver"
+        updated+=("$app:$up_ver")
+        continue
+    fi
+
+    if ! bash "$ROOT/apps/$app/build.sh" --arch "$ARCH"; then
+        log "FAIL $app 构建失败"
+        failed+=("$app:build")
+        continue
+    fi
+    fpk=$(ls "$ROOT/apps/$app/dist/$app-$up_ver-$ARCH.fpk" 2>/dev/null | tail -1)
+    if [ -z "$fpk" ]; then
+        log "FAIL $app 没找到 $app-$up_ver-$ARCH.fpk"
+        failed+=("$app:artifact")
+        continue
+    fi
+    if ! python3 "$ROOT/scripts/verify_fpk.py" "$fpk"; then
+        log "FAIL $app 结构校验失败"
+        failed+=("$app:verify")
+        continue
+    fi
+    # 只有 x86 能在本机真跑；arm 需要 qemu，缺失时明确跳过并标记
+    if [ "$ARCH" = "x86" ]; then
+        if ! bash "$ROOT/scripts/smoke.sh" "$app" "$port"; then
+            log "FAIL $app 冒烟失败（端口 $port）"
+            failed+=("$app:smoke")
+            continue
+        fi
+    else
+        if command -v qemu-aarch64-static >/dev/null 2>&1; then
+            if ! QEMU_LD_PREFIX=/usr/aarch64-linux-gnu bash "$ROOT/scripts/smoke.sh" "$app" "$port"; then
+                log "FAIL $app arm 冒烟失败"
+                failed+=("$app:smoke-arm")
+                continue
+            fi
+        else
+            log "WARN $app arm 包仅做结构校验（无 qemu-aarch64-static，未真机运行）"
+        fi
+    fi
+    updated+=("$app:$up_ver")
+done
+
+if [ "$DRY" = "1" ]; then
+    if [ "${#failed[@]}" -gt 0 ]; then
+        log "===== dry-run：有检查失败项 ${failed[*]}"
+        exit 1
+    fi
+    log "===== dry-run：需要更新 ${updated[*]:-无}"
+    exit 0
+fi
+if [ "${#failed[@]}" -gt 0 ]; then
+    log "===== 失败项：${failed[*]}（不发布）"
+    exit 1
+fi
+if [ "${#updated[@]}" -eq 0 ]; then
+    log "===== 没有需要更新的应用"
+    echo '{"updated":[],"at":"'"$(date -Iseconds)"'"}' > "$STATE_DIR/last-run.json"
+    exit 0
+fi
+
+log "----- 重建索引"
+if ! python3 "$ROOT/scripts/build_index.py"; then
+    log "FAIL 索引生成失败"
+    exit 1
+fi
+if ! python3 "$ROOT/scripts/validate_source.py"; then
+    log "FAIL 源校验失败（不发布）"
+    exit 1
+fi
+
+if [ "$PUBLISH" = "0" ] || [ "$DRY" = "1" ]; then
+    log "===== 已构建：${updated[*]}（--no-publish/--dry-run，不提交不发布）"
+    exit 0
+fi
+
+names=""
+for u in "${updated[@]}"; do names="${names} ${u%%:*}"; done
+log "----- 提交并推送"
+git add -A
+if ! git commit -q -m "auto: 跟进上游更新${names}
+
+$(for u in "${updated[@]}"; do echo "- ${u%%:*} ${u##*:}"; done)
+
+由 scripts/auto_update.sh 自动构建、校验、冒烟后提交。
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"; then
+    log "FAIL git commit 失败"
+    exit 3
+fi
+pushed=0
+for i in 1 2 3; do
+    if git -c http.version=HTTP/1.1 push origin HEAD:main; then pushed=1; break; fi
+    log "  push 第 $i 次失败，5s 后重试"
+    sleep 5
+done
+if [ "$pushed" != "1" ]; then
+    log "FAIL git push 失败（本地已提交，需要手动 push）"
+    exit 3
+fi
+
+log "----- 发布 Release"
+release_failed=0
+for u in "${updated[@]}"; do
+    app="${u%%:*}"; ver="${u##*:}"
+    if ! python3 "$ROOT/scripts/publish_release.py" --app "$app" --version "$ver" --arch "$ARCH"; then
+        log "FAIL $app $ver 发布失败"
+        release_failed=1
+        continue
+    fi
+    url="https://github.com/zcc050/FnDepot/releases/download/${app}-v${ver}/${app}-${ver}-${ARCH}.fpk"
+    code=$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 120 -I "$url" || true)
+    log "  下载地址 http=${code} ${url}"
+    case "$code" in 200|302) ;; *) log "WARN 下载地址返回 ${code}"; release_failed=1 ;; esac
+done
+
+python3 - "$STATE_DIR/last-run.json" "${updated[@]}" <<'PY'
+import json, sys, datetime
+data = {"at": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
+        "updated": [{"app": u.split(":", 1)[0], "version": u.split(":", 1)[1]} for u in sys.argv[2:]]}
+json.dump(data, open(sys.argv[1], "w"), ensure_ascii=False, indent=2)
+PY
+
+if [ "$release_failed" = "1" ]; then
+    log "===== 构建与推送完成，但部分 Release/下载校验失败（见上）"
+    exit 3
+fi
+log "===== 完成：${updated[*]}"
+exit 0

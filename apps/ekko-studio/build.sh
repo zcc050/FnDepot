@@ -9,9 +9,8 @@ APP=ekko-studio
 SRC="${ROOT}/apps/${APP}/src"
 CACHE="$(cache_dir ${APP})"
 
-read -r TAG PUBLISHED <<<"$(latest_release EKKOLearnAI/ekko-studio stable)"
+read -r VER PUBLISHED TAG <<<"$(app_version "$APP")"
 [ -n "${TAG:-}" ] || { echo "取不到 ekko-studio 最新版本" >&2; exit 1; }
-VER="${TAG#v}"
 echo "ekko-studio ${VER} (${ARCH})"
 
 # 官方 Node LTS（v24）；nodejs.org 在本机会 TLS 断连，走镜像

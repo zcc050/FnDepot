@@ -2,8 +2,13 @@
   "appname": "magpie",
   "display_name": "magpie",
   "desc": "给 Claude Code、Codex 等 AI Agent 统一换模型、统一走本地网关的桌面与网页控制台",
-  "categories": ["AI 工具", "开发工具"],
-  "platform": ["x86"],
+  "categories": [
+    "AI赋能",
+    "编程开发"
+  ],
+  "platform": [
+    "x86"
+  ],
   "upstream": "yetone/magpie",
   "upstream_url": "https://github.com/yetone/magpie",
   "license": "见上游仓库",
@@ -17,6 +22,8 @@
   "distributor_url": "https://github.com/zcc050/FnDepot",
   "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
   "icon": "ICON.PNG",
-  "previews": ["Preview/1.png"],
+  "previews": [
+    "Preview/1.png"
+  ],
   "readme": "README.md"
 }

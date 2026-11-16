@@ -6,9 +6,8 @@ parse_arch "$@"
 
 APP=magpie
 SRC="${ROOT}/apps/${APP}/src"
-read -r TAG PUBLISHED <<<"$(latest_release yetone/magpie-releases stable)"
+read -r VER PUBLISHED TAG <<<"$(app_version "$APP")"
 [ -n "${TAG:-}" ] || { echo "取不到 magpie 最新版本" >&2; exit 1; }
-VER="${TAG#v}"
 ASSET="magpie-cli-linux-amd64"
 is_arm && ASSET="magpie-cli-linux-arm64"
 echo "magpie ${VER} (${ARCH})"

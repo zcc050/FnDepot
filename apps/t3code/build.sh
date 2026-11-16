@@ -6,9 +6,8 @@ parse_arch "$@"
 
 APP=t3code
 SRC="${ROOT}/apps/${APP}/src"
-read -r TAG PUBLISHED <<<"$(latest_release pingdotgg/t3code stable)"
+read -r VER PUBLISHED TAG <<<"$(app_version "$APP")"
 [ -n "${TAG:-}" ] || { echo "取不到 t3code 最新稳定版" >&2; exit 1; }
-VER="${TAG#v}"
 SLUG="linux-x64"
 is_arm && SLUG="linux-arm64"
 ASSET="t3-${VER}-${SLUG}.tar.gz"

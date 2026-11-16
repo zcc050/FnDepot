@@ -14,14 +14,14 @@
         "x86"
       ],
       "categories": [
-        "AI 工具",
-        "生产力"
+        "AI赋能",
+        "系统工具"
       ],
-      "icon_url": "./ekko-studio/ICON.PNG",
+      "icon_url": "./apps/ekko-studio/ICON.PNG",
       "preview_urls": [
-        "./ekko-studio/Preview/1.png"
+        "./apps/ekko-studio/Preview/1.png"
       ],
-      "readme_url": "./ekko-studio/README.md",
+      "readme_url": "./apps/ekko-studio/README.md",
       "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
       "maintainer": "EKKOLearnAI",
       "maintainer_url": "https://github.com/EKKOLearnAI/ekko-studio",
@@ -53,14 +53,14 @@
         "x86"
       ],
       "categories": [
-        "AI 工具",
-        "开发工具"
+        "AI赋能",
+        "编程开发"
       ],
-      "icon_url": "./magpie/ICON.PNG",
+      "icon_url": "./apps/magpie/ICON.PNG",
       "preview_urls": [
-        "./magpie/Preview/1.png"
+        "./apps/magpie/Preview/1.png"
       ],
-      "readme_url": "./magpie/README.md",
+      "readme_url": "./apps/magpie/README.md",
       "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
       "maintainer": "yetone",
       "maintainer_url": "https://github.com/yetone/magpie",
@@ -92,14 +92,14 @@
         "x86"
       ],
       "categories": [
-        "开发工具",
-        "远程控制"
+        "AI赋能",
+        "编程开发"
       ],
-      "icon_url": "./t3code/ICON.PNG",
+      "icon_url": "./apps/t3code/ICON.PNG",
       "preview_urls": [
-        "./t3code/Preview/1.png"
+        "./apps/t3code/Preview/1.png"
       ],
-      "readme_url": "./t3code/README.md",
+      "readme_url": "./apps/t3code/README.md",
       "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
       "maintainer": "pingdotgg",
       "maintainer_url": "https://github.com/pingdotgg/t3code",

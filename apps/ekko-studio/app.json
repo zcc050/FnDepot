@@ -2,8 +2,13 @@
   "appname": "ekko-studio",
   "display_name": "Ekko Studio",
   "desc": "本地优先的 AI 工作区：多 Agent 聊天、编码与可视化工作流，可自托管的 Web 控制台",
-  "categories": ["AI 工具", "生产力"],
-  "platform": ["x86"],
+  "categories": [
+    "AI赋能",
+    "系统工具"
+  ],
+  "platform": [
+    "x86"
+  ],
   "upstream": "EKKOLearnAI/ekko-studio",
   "upstream_url": "https://github.com/EKKOLearnAI/ekko-studio",
   "license": "BSL-1.1",
@@ -17,6 +22,8 @@
   "distributor_url": "https://github.com/zcc050/FnDepot",
   "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
   "icon": "ICON.PNG",
-  "previews": ["Preview/1.png"],
+  "previews": [
+    "Preview/1.png"
+  ],
   "readme": "README.md"
 }

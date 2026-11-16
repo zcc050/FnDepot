@@ -6,3 +6,6 @@ apps/*/dist/
 *.fpk
 .DS_Store
 __pycache__/
+
+# 自动更新流水线的运行态（日志/锁/状态）
+.auto-update/

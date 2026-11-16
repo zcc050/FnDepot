@@ -98,3 +98,31 @@ with open(os.path.join(d["DIST"], d["ARCH"] + ".json"), "w", encoding="utf-8") a
 print(f"  -> {p} ({meta['size']} bytes, sha256 {meta['sha256'][:12]}…)")
 EOF
 }
+
+# ── 上游版本：唯一事实源（build.sh 与 check_updates.py 共用，别在别处硬编码） ──
+app_release_repo() {  # app_release_repo <app> -> owner/repo
+    case "${1:-}" in
+        magpie)      echo "yetone/magpie-releases" ;;
+        t3code)      echo "pingdotgg/t3code" ;;
+        ekko-studio) echo "EKKOLearnAI/ekko-studio" ;;
+        *) return 1 ;;
+    esac
+}
+
+app_version() {  # app_version <app> -> "<version> <published_at> <tag>"
+    local app="${1:?app_version 需要 app}" repo tag pub
+    repo="$(app_release_repo "$app")" || return 1
+    read -r tag pub <<<"$(latest_release "$repo" stable)"
+    [ -n "${tag:-}" ] || return 1
+    printf '%s %s %s\n' "${tag#v}" "${pub:-}" "$tag"
+}
+
+# 直接执行时提供 CLI：bash scripts/lib.sh {version|repo} <app>
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+    case "${1:-}" in
+        version) shift; app_version "${1:?app}" ;;
+        repo)    shift; app_release_repo "${1:?app}" ;;
+        *) echo "usage: lib.sh {version|repo} <app>" >&2; exit 2 ;;
+    esac
+    exit $?
+fi
