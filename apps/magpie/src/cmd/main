@@ -77,9 +77,20 @@ case "$1" in
     stop)    stop_app ;;
     restart) stop_app; sleep 1; start_app ;;
     status)
+        # 飞牛会定期调 status，非 0 就判定应用异常并重启（事件日志里记 APP_CRASH）。
+        # 这里不能用 HTTP 探活：插件宿主加载时 CPU/内存会冲高一两分钟，curl 3 秒超时
+        # 会误判成崩溃，飞牛就把正常进程杀掉重启——表现为"隔几分钟崩一次"。
+        # 只用进程存活 + 两个端口在监听，这两件事不受瞬时负载影响。
         is_running || exit 3
-        service_ready && gateway_ready && exit 0
-        exit 4
+        if ! port_in_use "$WEB_PORT"; then
+            log_msg "status: web port ${WEB_PORT} not listening"
+            exit 4
+        fi
+        if ! port_in_use "$GW_PORT"; then
+            log_msg "status: gateway port ${GW_PORT} not listening"
+            exit 4
+        fi
+        exit 0
         ;;
     *) echo "usage: $0 {start|stop|restart|status}"; exit 1 ;;
 esac

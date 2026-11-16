@@ -52,7 +52,12 @@ export XDG_STATE_HOME="${TRIM_PKGHOME}/.local/state"
 mkdir -p "${TRIM_PKGVAR}" "${LOG_DIR:-${TRIM_PKGVAR}}/logs" "${TRIM_PKGHOME}" \
          "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" "${XDG_CACHE_HOME}" "${XDG_STATE_HOME}" 2>/dev/null
 
-log_msg() { echo "$(date '+%F %T') - $*" >>"${LOG_FILE}"; }
+log_msg() {
+    echo "$(date '+%F %T') - $*" >>"${LOG_FILE}"
+    # 诊断副本：$TRIM_PKGVAR 是 700，出了这个应用谁都读不到；
+    # /tmp 下的副本只记生命周期事件（不含密钥），重启即丢，用来复盘崩溃
+    echo "$(date '+%F %T') - $*" >>"/tmp/${APPNAME}-runtime.log" 2>/dev/null
+}
 install_log() { echo "$(date '+%F %T') $*" >&2; }
 
 is_running() {
