@@ -62,12 +62,6 @@ download() {  # download <url> <dest-file>; cached, resumable, retried
     return 1
 }
 
-# 无人值守时凭证必须是"存好的"：优先环境变量，其次 git credential（store 文件绝对路径）
-gh_credential_ok() {
-    [ -n "${GH_TOKEN:-}${GITHUB_TOKEN:-}" ] && return 0
-    printf 'protocol=https\nhost=github.com\n\n' | git credential fill 2>/dev/null | grep -q '^password=.'
-}
-
 set_manifest() {  # set_manifest <src-dir> <key> <value> [key value ...]
     local src="$1"; shift
     python3 - "$src/manifest" "$@" <<'EOF'

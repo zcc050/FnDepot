@@ -49,6 +49,13 @@ fi
 
 log() { printf '%s %s\n' "$(date '+%F %T')" "$*"; }
 
+# 无人值守时凭证必须是"存好的"：优先环境变量，其次 git credential（store 文件是绝对路径，
+# cron 的最小环境里也能读到）。注意不能 source lib.sh —— 它带 set -e，会改变本脚本的失败语义。
+gh_credential_ok() {
+    [ -n "${GH_TOKEN:-}${GITHUB_TOKEN:-}" ] && return 0
+    printf 'protocol=https\nhost=github.com\n\n' | git credential fill 2>/dev/null | grep -q '^password=.'
+}
+
 # github.com:443 会间歇性不通，无人值守时要多轮退避，不能一次失败就丢掉提交
 push_retry() {
     local i
