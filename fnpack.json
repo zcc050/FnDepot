@@ -146,18 +146,6 @@
       "is_docker": false,
       "service_port": "3773",
       "releases": {
-        "0.1.9": {
-          "changelog": "跟进上游 0.1.9：编码 Agent 控制面、配对与远程访问改进，详见 https://github.com/pingdotgg/t3code/releases/tag/v0.1.9",
-          "updated_at": "2026-11-11T11:33:49Z",
-          "os_min_version": "1.0.0",
-          "packages": {
-            "x86": {
-              "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.9/t3code-0.1.9-x86.fpk",
-              "sha256": "0c02015b0953e6b4dd061077de4edc1031db1a6bbaba10d203274caf8b63f6b0",
-              "size": 150400095
-            }
-          }
-        },
         "0.1.9-1": {
           "changelog": "跟进上游 0.1.9：编码 Agent 控制面、配对与远程访问改进，详见 https://github.com/pingdotgg/t3code/releases/tag/v0.1.9",
           "updated_at": "2026-11-11T11:33:49Z",

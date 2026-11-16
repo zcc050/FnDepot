@@ -127,6 +127,15 @@ def main() -> int:
     for name, entry in index["apps"].items():
         entry["releases"] = dict(sorted(entry.get("releases", {}).items(), key=lambda kv: vkey(kv[0])))
 
+    # 修订号版本取代同上游版本的旧包：有 0.1.9-1 时不再暴露 0.1.9，
+    # 否则客户端在 <ver> 与 <ver>-N 之间排序规则不明，可能选到旧包
+    for name, entry in index["apps"].items():
+        rels = entry.get("releases", {})
+        for ver in list(rels):
+            base = ver.rsplit("-", 1)[0]
+            if base != ver and base in rels:
+                del rels[base]
+
     text = json.dumps(index, ensure_ascii=False, indent=2) + "\n"
     if problems:
         print("索引生成失败：", file=sys.stderr)
