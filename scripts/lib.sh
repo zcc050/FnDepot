@@ -117,6 +117,19 @@ app_version() {  # app_version <app> -> "<version> <published_at> <tag>"
     printf '%s %s %s\n' "${tag#v}" "${pub:-}" "$tag"
 }
 
+# 打包修订号：上游版本没变、但包内容需要更新时用（飞牛只认 version 变化才提示升级）。
+# app.json 里写 "pkg_revision": 1 -> 包版本变成 0.1.9-1
+app_pkg_revision() {  # app_pkg_revision <app> -> "1" 或空
+    local app="${1:?app_pkg_revision 需要 app}" f="${ROOT}/apps/${1}/app.json"
+    [ -f "$f" ] || return 0
+    python3 -c "import json,sys;v=json.load(open('$f',encoding='utf-8')).get('pkg_revision');print(v if v not in (None,'') else '')" 2>/dev/null
+}
+
+pkg_version() {  # pkg_version <app> <upstream-version> -> "0.1.9-1" / "0.1.9"
+    local rev; rev="$(app_pkg_revision "${1:?}")"
+    if [ -n "$rev" ]; then printf '%s-%s\n' "$2" "$rev"; else printf '%s\n' "$2"; fi
+}
+
 # 直接执行时提供 CLI：bash scripts/lib.sh {version|repo} <app>
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     case "${1:-}" in

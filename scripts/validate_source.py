@@ -142,8 +142,9 @@ def main() -> int:
         if not releases:
             err(f"{app}: releases 不能为空")
         for ver, rel in releases.items():
-            if not re.fullmatch(r"[0-9]+(\.[0-9]+)*", ver):
-                err(f"{app}: 版本号必须是点分数字，实际 {ver!r}")
+            # 飞牛允许打包修订号后缀（如 0.8.24-1），上游版本本体仍须是点分数字
+            if not re.fullmatch(r"[0-9]+(\.[0-9]+)*(-[0-9A-Za-z.]+)?", ver):
+                err(f"{app}: 版本号必须是点分数字（可带 -N 修订号），实际 {ver!r}")
             for key in ("changelog", "updated_at", "packages"):
                 if key not in rel:
                     err(f"{app} {ver}: 缺少 {key}")

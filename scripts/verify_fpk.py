@@ -70,7 +70,8 @@ def main(path: str) -> int:
         print(f"没有这个文件: {path}", file=sys.stderr)
         return 2
     name = os.path.basename(path)
-    m = re.match(r"^(?P<app>[a-z0-9._-]+)-(?P<ver>[0-9][0-9.]*)-(?P<arch>x86|arm|loongarch|risc-v)\.fpk$", name)
+    # app 非贪婪、ver 以数字开头：兼容打包修订号（t3code-0.1.9-1-x86.fpk）与含连字符的 appname
+    m = re.match(r"^(?P<app>[a-z][a-z0-9._-]*?)-(?P<ver>[0-9][0-9A-Za-z.\-]*)-(?P<arch>x86|arm|loongarch|risc-v)\.fpk$", name)
     if not m:
         fail(f"文件名不符合 <app>-<version>-<arch>.fpk: {name}")
 
