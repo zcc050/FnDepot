@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs when uninstall starts.
+# 卸载前：先停进程（否则删文件后端口仍被占用）。
 source "$(dirname "$0")/common"
-stop_bg
+stop_app
 exit 0

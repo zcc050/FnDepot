@@ -1,9 +1,14 @@
 #!/bin/bash
-# Runs after files are copied, before the app is started.
+# 文件拷贝完成、启动之前：修权限、初始化口令、打 iframe 补丁、清理历史残留。
 source "$(dirname "$0")/common"
 
-chmod +x "${SERVER_DIR}/magpie" 2>/dev/null
-ensure_web_key >/dev/null
-install_log "安装完成: ${TRIM_APPDEST}"
-echo "安装完成" >"${TRIM_TEMP_LOGFILE}"
+chmod 755 "${BIN}" 2>/dev/null
+chmod 755 "${SERVER_DIR}/magpie" 2>/dev/null
+KEY="$(ensure_web_key)"
+apply_csp_patch
+cleanup_legacy
+write_access_info "$KEY"
+
+install_log "安装完成: ${TRIM_APPDEST}（Web ${WEB_PORT} / 网关 ${GW_PORT}，口令见 ${KEY_FILE}）"
+echo "安装完成。Web 界面 http://<NAS-IP>:${WEB_PORT}，网关 http://<NAS-IP>:${GW_PORT}（访问口令见 ${KEY_FILE}）" >"${TRIM_TEMP_LOGFILE}"
 exit 0

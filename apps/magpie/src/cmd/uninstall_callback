@@ -1,13 +1,13 @@
 #!/bin/bash
-# Runs after uninstall; keep data unless the user asked to delete it.
+# 卸载后：默认保留数据；只有向导里明确勾选删除才清空。
 source "$(dirname "$0")/common"
 
-stop_bg
-if [ "${wizard_delete_data}" = "true" ]; then
+stop_app
+if [ "${wizard_delete_data:-}" = "true" ]; then
     rm -rf "${TRIM_PKGVAR:?}"/* "${TRIM_PKGVAR:?}"/.[!.]* 2>/dev/null
     rm -rf "${TRIM_PKGHOME:?}"/* "${TRIM_PKGHOME:?}"/.[!.]* 2>/dev/null
-    install_log "已删除应用数据"
+    install_log "已删除应用数据（${TRIM_PKGVAR} / ${TRIM_PKGHOME}）"
 else
-    install_log "已保留应用数据: ${TRIM_PKGVAR}"
+    install_log "已保留应用数据: ${TRIM_PKGVAR}（供应商/密钥/登录态都在这里）"
 fi
 exit 0

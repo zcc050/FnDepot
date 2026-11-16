@@ -15,6 +15,8 @@ tar -xzf "$FPK" -C "$W/dest" 2>/dev/null
 tar -xzf "$W/dest/app.tgz" -C "$W/dest" && rm -f "$W/dest/app.tgz"
 
 export TRIM_APPDEST="$W/dest" TRIM_PKGVAR="$W/var" TRIM_PKGHOME="$W/home" launcher_port="$PORT"
+# magpie 还要一个网关端口：冲烟时避开生产在用的 3425
+[ "$APP" = "magpie" ] && export MAGPIE_GATEWAY_PORT="${MAGPIE_GATEWAY_PORT:-$((PORT+100))}"
 echo "== ${APP} $(basename "$FPK") port ${PORT}"
 bash "$W/dest/cmd/install_callback" >/dev/null 2>&1 || echo "install_callback rc=$?"
 

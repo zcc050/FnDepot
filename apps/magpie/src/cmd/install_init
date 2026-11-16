@@ -1,11 +1,12 @@
 #!/bin/bash
-# Runs before files are copied. Fail early on an unusable environment.
+# 落盘前：检查 Web 与网关两个端口可用。
 source "$(dirname "$0")/common"
 
-PORT="${port:-3430}"
-if ss -tln 2>/dev/null | grep -q ":${PORT} "; then
-    echo "端口 ${PORT} 已被占用，请换一个端口后重试" >"${TRIM_TEMP_LOGFILE}"
-    exit 1
-fi
-echo "端口检测通过" >"${TRIM_TEMP_LOGFILE}"
+for p in "${WEB_PORT}" "${GW_PORT}"; do
+    if port_in_use "$p"; then
+        echo "端口 ${p} 已被占用（magpie 需要 Web ${WEB_PORT} + 网关 ${GW_PORT} 两个端口），请换端口或先停掉占用程序。" >"${TRIM_TEMP_LOGFILE}"
+        exit 1
+    fi
+done
+echo "端口检测通过（Web ${WEB_PORT} / 网关 ${GW_PORT}）" >"${TRIM_TEMP_LOGFILE}"
 exit 0

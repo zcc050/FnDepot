@@ -1,28 +1,58 @@
 #!/bin/bash
 # Shared helpers for the fpk lifecycle scripts.
 # fnOS exports these when calling cmd/*:
-#   TRIM_APPDEST  installed app dir       (/vol1/@appstore/<appname>)
+#   TRIM_APPDEST  installed app dir       (/vol1/@appcenter/<appname>)
 #   TRIM_PKGVAR   persistent data dir     (/vol1/@appdata/<appname>)
 #   TRIM_PKGHOME  per-app home dir        (/vol1/@apphome/<appname>)
 #   TRIM_APPDIR    fpk root while installing/uninstalling
 #   TRIM_TEMP_LOGFILE  file whose content the installer shows on failure
-# Wizard fields are exported under their field name (e.g. $port).
+# Wizard fields are exported under their field name (e.g. $launcher_port).
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
 
 APPNAME="magpie"
+DEFAULT_WEB_PORT=3430
+DEFAULT_GW_PORT=3425
+
+# TRIM_* 缺失时（本地演练/兼容）从 /var/apps 反推，不写死卷号
+_resolve_trim_paths() {
+    local appdir="" vol=""
+    appdir="$(readlink -f "/var/apps/${APPNAME}/target" 2>/dev/null || true)"
+    [ -n "$appdir" ] || appdir="${TRIM_APPDEST:-}"
+    case "$appdir" in /vol[0-9]*/@appcenter/*) vol="$(printf '%s' "$appdir" | cut -d/ -f2)" ;; esac
+    if [ -z "$vol" ]; then
+        local v
+        for v in /vol[0-9]*; do
+            [ -d "${v}/@appcenter/${APPNAME}" ] && vol="${v#/}" && break
+        done
+    fi
+    [ -n "$vol" ] || vol="vol1"
+    : "${TRIM_APPDEST:=${appdir:-/${vol}/@appcenter/${APPNAME}}}"
+    : "${TRIM_PKGVAR:=/${vol}/@appdata/${APPNAME}}"
+    : "${TRIM_PKGHOME:=/${vol}/@apphome/${APPNAME}}"
+    : "${TRIM_PKGTMP:=/${vol}/@apptemp/${APPNAME}}"
+}
+_resolve_trim_paths
+
 SERVER_DIR="${TRIM_APPDEST}/server"
-LOG_DIR="${TRIM_PKGVAR}/logs"
-LOG_FILE="${LOG_DIR}/${APPNAME}.log"
+BIN="${SERVER_DIR}/magpie"
+WEB_PORT="${launcher_port:-${TRIM_SERVICE_PORT:-$DEFAULT_WEB_PORT}}"
+GW_PORT="${wizard_gateway_port:-${MAGPIE_GATEWAY_PORT:-$DEFAULT_GW_PORT}}"
+KEY_FILE="${TRIM_PKGVAR}/web.key"
 PID_FILE="${TRIM_PKGVAR}/${APPNAME}.pid"
+LOG_FILE="${TRIM_PKGVAR}/${APPNAME}.log"
+INFO_FILE="${TRIM_PKGVAR}/access-info.txt"
+START_ERR_LOG="${TRIM_TEMP_LOGFILE:-${TRIM_PKGTMP}/start.log}"
+
 export HOME="${TRIM_PKGHOME}"
 export XDG_CONFIG_HOME="${TRIM_PKGHOME}/.config"
 export XDG_DATA_HOME="${TRIM_PKGHOME}/.local/share"
 export XDG_CACHE_HOME="${TRIM_PKGHOME}/.cache"
+export XDG_STATE_HOME="${TRIM_PKGHOME}/.local/state"
 
-mkdir -p "${LOG_DIR}" "${TRIM_PKGHOME}" "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" "${XDG_CACHE_HOME}"
+mkdir -p "${TRIM_PKGVAR}" "${LOG_DIR:-${TRIM_PKGVAR}}/logs" "${TRIM_PKGHOME}" \
+         "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" "${XDG_CACHE_HOME}" "${XDG_STATE_HOME}" 2>/dev/null
 
 log_msg() { echo "$(date '+%F %T') - $*" >>"${LOG_FILE}"; }
-# install_log goes to stderr so it lands in the installer's log view.
 install_log() { echo "$(date '+%F %T') $*" >&2; }
 
 is_running() {
@@ -30,37 +60,158 @@ is_running() {
     kill -0 "$(cat "${PID_FILE}")" 2>/dev/null || { rm -f "${PID_FILE}"; return 1; }
 }
 
-# start_bg <command...>: start detached, return 0 as soon as it is alive.
-start_bg() {
-    if is_running; then log_msg "already running (pid $(cat "${PID_FILE}"))"; return 0; fi
-    log_msg "start: $*"
-    ( cd "${SERVER_DIR}" && exec "$@" >>"${LOG_FILE}" 2>&1 ) &
-    echo $! >"${PID_FILE}"
-    sleep 2
-    is_running && { log_msg "started (pid $(cat "${PID_FILE}"))"; return 0; }
-    log_msg "exited right after start, see ${LOG_FILE}"
-    rm -f "${PID_FILE}"
+port_in_use() { ss -tln 2>/dev/null | grep -q ":$1 "; }
+
+# 端口被自己（本应用路径下的 magpie）占着，视作上一次没停干净
+# argv 里是否有某个参数**完全等于** $2（不做子串匹配，避免误判）
+argv_has() {
+    local pid="$1" want="$2" arg
+    [ -r "/proc/${pid}/cmdline" ] || return 1
+    while IFS= read -r -d '' arg; do
+        [ "$arg" = "$want" ] && return 0
+    done <"/proc/${pid}/cmdline" 2>/dev/null
     return 1
 }
 
-stop_bg() {
-    is_running || { log_msg "not running"; return 0; }
-    local pid; pid=$(cat "${PID_FILE}")
-    log_msg "stop (pid ${pid})"
-    kill -TERM "${pid}" 2>/dev/null
-    for _ in $(seq 1 15); do kill -0 "${pid}" 2>/dev/null || break; sleep 1; done
-    kill -0 "${pid}" 2>/dev/null && kill -KILL "${pid}" 2>/dev/null
-    rm -f "${PID_FILE}"
+is_own_process() {  # is_own_process <pid>
+    local pid="$1"
+    [ "$pid" = "$$" ] && return 1
+    [ "$pid" = "$PPID" ] && return 1
+    argv_has "$pid" "${BIN}" && return 0
+    argv_has "$pid" "${TRIM_APPDEST}/bin/magpie" && return 0
+    argv_has "$pid" "/var/apps/${APPNAME}/cmd/magpie-watcher.py" && return 0
+    return 1
+}
+
+port_owner_is_self() {
+    local port="$1" pid
+    for pid in $(ss -tlnp 2>/dev/null | grep ":$port " | grep -o 'pid=[0-9]*' | cut -d= -f2 | sort -u); do
+        is_own_process "$pid" && echo "$pid"
+    done
+}
+
+lan_ip() {
+    local ip
+    ip="$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}')"
+    [ -n "$ip" ] || ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+    printf '%s' "${ip:-127.0.0.1}"
+}
+
+# Web 界面口令：上游要求 16+ 字符；不传则每次启动换新 key，已登录浏览器全部失效
+ensure_web_key() {
+    local k=""
+    if [ -s "${KEY_FILE}" ]; then
+        k="$(tr -d '\r\n' <"${KEY_FILE}")"
+    fi
+    if [ "${#k}" -lt 16 ]; then
+        k="$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 24)"
+        printf '%s\n' "$k" >"${KEY_FILE}"
+        chmod 600 "${KEY_FILE}" 2>/dev/null
+        log_msg "generated web key -> ${KEY_FILE}"
+    fi
+    # 桌面入口带免登 key（fnOS 用 iframe 打开，避免每次手输）
+    sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"/?k=${k}\"|" "${TRIM_APPDEST}/ui/config" 2>/dev/null
+    printf '%s' "$k"
+}
+
+# magpie 会在响应头里下发 CSP frame-ancestors 'self'，而飞牛桌面用 iframe 打开，
+# 祖先链里有 fnOS 页面 → 浏览器整帧拒绝（灰屏/破图）。
+# 这里对二进制做等长字节替换（不改大小、不动 Go 段偏移）：
+#   frame-ancestors 'self'  ->  frame-ancestors *     (22B)
+#   Content-Security-Policy ->  X-Content-Security-Poli (23B)
+# 必须在进程停止后做（运行中二进制是 Text file busy），所以每次 start 前都重打。
+apply_csp_patch() {
+    local here; here="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
+    [ -f "${BIN}" ] || return 0
+    if command -v python3 >/dev/null 2>&1 && [ -f "${here}/patch-csp.py" ]; then
+        python3 "${here}/patch-csp.py" "${BIN}" >>"${LOG_FILE}" 2>&1 || \
+            log_msg "WARN csp patch failed, see log"
+        return 0
+    fi
+    # 兜底：没有 python3 时用 perl 等长替换
+    if command -v perl >/dev/null 2>&1; then
+        perl -0777 -pi -e "s/frame-ancestors 'self'/frame-ancestors *     /g" "${BIN}" 2>/dev/null
+        perl -0777 -pi -e "s/Content-Security-Policy/X-Content-Security-Poli/g" "${BIN}" 2>/dev/null
+        log_msg "csp patch applied via perl fallback"
+    fi
     return 0
 }
 
-# magpie's page answers 401 without the key it prints at startup; keep one and put
-# it in the desktop entry's URL so the app opens signed in.
-ensure_web_key() {
-    local f="${TRIM_PKGVAR}/web.key" k
-    if [ -s "${f}" ]; then k=$(cat "${f}"); else
-        k=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 24); echo "${k}" >"${f}"; chmod 600 "${f}"
+service_ready() {
+    local code
+    command -v curl >/dev/null 2>&1 || return 0
+    code="$(curl -s -o /dev/null -m 3 -w '%{http_code}' "http://127.0.0.1:${WEB_PORT}/" 2>/dev/null)"
+    case "$code" in 200|302|401) return 0 ;; esac
+    return 1
+}
+
+# 网关就绪：能被 Agent/客户端真正调通（401 也说明服务在，只是没带客户端密钥）
+gateway_ready() {
+    local code
+    command -v curl >/dev/null 2>&1 || return 0
+    code="$(curl -s -o /dev/null -m 3 -w '%{http_code}' "http://127.0.0.1:${GW_PORT}/v1/models" 2>/dev/null)"
+    case "$code" in 200|401) return 0 ;; esac
+    return 1
+}
+
+write_access_info() {
+    local k="$1" ip; ip="$(lan_ip)"
+    cat >"${INFO_FILE}" <<EOF
+Magpie 访问信息（启动时自动生成，可删除）
+====================================================
+Web 管理界面： http://${ip}:${WEB_PORT}
+免登直达：     http://${ip}:${WEB_PORT}/?k=${k}
+Web 访问口令：  ${k}   （保存在 ${KEY_FILE}）
+
+网关地址（OpenAI / Anthropic / Gemini 协议互相转换）：
+    http://${ip}:${GW_PORT}
+    http://${ip}:${GW_PORT}/v1
+    客户端密钥请在 Web 界面 Gateway 页按客户端单独创建，不要共用。
+
+数据目录：${TRIM_PKGVAR}   （供应商、密钥、订阅登录态、路由组）
+日志：${LOG_FILE}
+EOF
+    chmod 600 "${INFO_FILE}" 2>/dev/null
+}
+
+rotate_log() {
+    [ -f "${LOG_FILE}" ] || return 0
+    local size; size="$(stat -c%s "${LOG_FILE}" 2>/dev/null || echo 0)"
+    if [ "${size}" -gt 5242880 ]; then
+        mv -f "${LOG_FILE}" "${LOG_FILE}.1" 2>/dev/null || true
+        log_msg "log rotated (${size} bytes)"
     fi
-    sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"/?k=${k}\"|" "${TRIM_APPDEST}/ui/config" 2>/dev/null
-    printf '%s' "${k}"
+}
+
+# 只按本应用路径锚定清理，不用宽泛关键字（避免误杀 Docker/其他应用的 magpie）
+# 同时清理历史包装留下的 watcher（/var/apps/<app>/cmd/magpie-watcher.py）与旧 bin/ 布局
+cleanup_legacy() {
+    local pid pids=() i
+    for pid in $(pgrep -f -- "${APPNAME}" 2>/dev/null); do
+        is_own_process "$pid" && pids+=("$pid")
+    done
+    [ "${#pids[@]}" -eq 0 ] && return 0
+    log_msg "cleanup legacy/own processes: ${pids[*]}"
+    for pid in "${pids[@]}"; do kill -TERM "$pid" 2>/dev/null || true; done
+    for i in 1 2 3 4 5; do
+        local alive=0
+        for pid in "${pids[@]}"; do kill -0 "$pid" 2>/dev/null && alive=1; done
+        [ "$alive" = "0" ] && return 0
+        sleep 1
+    done
+    for pid in "${pids[@]}"; do kill -KILL "$pid" 2>/dev/null || true; done
+    return 0
+}
+
+stop_app() {
+    is_running || { cleanup_legacy; return 0; }
+    local pid; pid="$(cat "${PID_FILE}")"
+    log_msg "stop (pid ${pid})"
+    kill -TERM "${pid}" 2>/dev/null
+    local i
+    for i in $(seq 1 15); do kill -0 "${pid}" 2>/dev/null || break; sleep 1; done
+    kill -0 "${pid}" 2>/dev/null && kill -KILL "${pid}" 2>/dev/null
+    rm -f "${PID_FILE}"
+    cleanup_legacy
+    return 0
 }

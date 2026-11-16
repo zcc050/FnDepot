@@ -1,17 +1,85 @@
 #!/bin/bash
-# Service control. Exit 0 = ok, status exits 3 when stopped.
+# magpie 生命周期（start / stop / restart / status）
+#
+# 关键点：
+#   1. 以 --gateway 运行（与 fnOS 上的既有部署一致：只做网关 + Web 管理，不暴露 Agents/Sessions 面板）。
+#   2. HOME/XDG_* 全部重定向到 $TRIM_PKGHOME：供应商、密钥、订阅登录态都在 $HOME/.config/magpie。
+#   3. Web 口令持久化在 $TRIM_PKGVAR/web.key，经 MAGPIE_WEB_KEY 传入；不传则每次启动换新 key。
+#   4. 启动前给二进制打 CSP 等长补丁，否则在飞牛 iframe 里灰屏（见 cmd/patch-csp.py）。
+#   5. 就绪判断要两个端口都通：Web $WEB_PORT 与网关 $GW_PORT。
+#   6. 只按本应用路径锚定清理进程，不用宽泛关键字（避免误杀 Docker/其他应用的 magpie）。
 source "$(dirname "$0")/common"
 
+fail_start() {
+    local msg="$1"
+    log_msg "FAIL ${msg}"
+    echo "${msg}" >"${START_ERR_LOG}" 2>/dev/null
+    tail -20 "${LOG_FILE}" 2>/dev/null >&2
+    return 1
+}
+
 start_app() {
-    export MAGPIE_ADDR="${MAGPIE_ADDR:-127.0.0.1:3425}"
-    export MAGPIE_WEB_KEY="$(ensure_web_key)"
-    start_bg "${SERVER_DIR}/magpie" web --addr "0.0.0.0:${launcher_port:-3430}" --no-open
+    rotate_log
+
+    # 先清历史布局残留（老包的 bin/magpie、magpie-watcher.py），再查端口；
+    # 否则升级后旧进程持有端口时会被误判成“别人的程序”。
+    cleanup_legacy
+
+    # 端口检查：自己残留的进程先清掉，别人的直接报错
+    local p owners
+    for p in "${WEB_PORT}" "${GW_PORT}"; do
+        if port_in_use "$p"; then
+            owners="$(port_owner_is_self "$p")"
+            if [ -n "$owners" ]; then
+                log_msg "port ${p} held by stale self (pid ${owners}), killing"
+                echo "$owners" | xargs -r kill -TERM 2>/dev/null
+                sleep 1
+            else
+                fail_start "magpie 启动失败：端口 ${p} 已被其他程序占用，请换端口或先停掉占用程序。"
+                return 1
+            fi
+        fi
+    done
+
+    is_running && { service_ready && return 0; stop_app; }
+
+    # 进程停止后才能写二进制（Text file busy）
+    apply_csp_patch
+
+    local key; key="$(ensure_web_key)"
+    export MAGPIE_WEB_KEY="$key"
+    export MAGPIE_ADDR="${MAGPIE_ADDR:-0.0.0.0:${GW_PORT}}"
+    log_msg "start: web=0.0.0.0:${WEB_PORT} gateway=${MAGPIE_ADDR}"
+
+    ( cd "${SERVER_DIR}" && exec "${BIN}" web --gateway --addr "0.0.0.0:${WEB_PORT}" --no-open ) \
+        >>"${LOG_FILE}" 2>&1 &
+    echo $! >"${PID_FILE}"
+
+    local i
+    for i in $(seq 1 45); do
+        if ! is_running; then
+            fail_start "magpie 启动后立即退出（见日志）。"
+            return 1
+        fi
+        if service_ready && gateway_ready; then
+            write_access_info "$key"
+            log_msg "ready (pid $(cat "${PID_FILE}"), web ${WEB_PORT}, gateway ${GW_PORT})"
+            return 0
+        fi
+        sleep 1
+    done
+    fail_start "magpie 45 秒内未就绪（web=${WEB_PORT} gateway=${GW_PORT}）。"
+    return 1
 }
 
 case "$1" in
     start)   start_app ;;
-    stop)    stop_bg ;;
-    restart) stop_bg; sleep 1; start_app ;;
-    status)  is_running && exit 0 || exit 3 ;;
-    *)       echo "usage: $0 {start|stop|restart|status}"; exit 1 ;;
+    stop)    stop_app ;;
+    restart) stop_app; sleep 1; start_app ;;
+    status)
+        is_running || exit 3
+        service_ready && gateway_ready && exit 0
+        exit 4
+        ;;
+    *) echo "usage: $0 {start|stop|restart|status}"; exit 1 ;;
 esac

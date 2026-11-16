@@ -1,4 +1,5 @@
 #!/bin/bash
-# Runs before the user's settings changes are applied.
+# 改设置前先停服务，config_callback 会用新端口重新拉起。
 source "$(dirname "$0")/common"
+stop_app
 exit 0

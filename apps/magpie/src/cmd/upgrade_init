@@ -1,5 +1,5 @@
 #!/bin/bash
-# Runs before an upgrade overwrites files.
+# 覆盖文件前：停掉老进程与历史 watcher，避免新包启动时端口被旧进程占着。
 source "$(dirname "$0")/common"
-stop_bg
+stop_app
 exit 0

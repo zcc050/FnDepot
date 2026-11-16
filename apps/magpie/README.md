@@ -10,9 +10,42 @@ Claude Code、Codex、OpenCode 等 Agent 统一换模型、统一走本地网关
   `/vol1/@appdata/magpie/logs/magpie.log`；别把带 key 的链接发给别人。
 - 数据与配置在 `/vol1/@appdata/magpie/`，日志同名目录下 `logs/`。
 
+## 运行形态（与 fnOS 上的既有部署一致）
+
+- 以 `--gateway` 启动：只提供网关 + Web 管理台，不暴露 Agents/Sessions/Library 面板。
+- 双端口：Web `${launcher_port}`（默认 3430）、网关 3425；启动时**两个端口都探活**才算就绪，
+  就绪结果写在 `$TRIM_PKGVAR/access-info.txt`（含免登链接与口令，权限 600）。
+- Web 口令持久化在 `$TRIM_PKGVAR/web.key`，通过 `MAGPIE_WEB_KEY` 传入；不传则每次启动换新 key，
+  已登录浏览器会全部失效。
+- HOME / XDG_* 全部重定向到 `$TRIM_PKGHOME`：供应商、密钥、订阅登录态都在 `$HOME/.config/magpie`，
+  升级/重装不会丢。
+
+## iframe 兼容补丁（重要）
+
+飞牛桌面是用 iframe 打开应用的，而 magpie 的响应带 CSP `frame-ancestors 'self'`，跨源祖先链会被
+浏览器整帧拒绝 —— 表现为**灰屏/破图**。本包在每次启动前对二进制做**等长字节替换**：
+
+```
+frame-ancestors 'self'   (22B) -> frame-ancestors *      (22B)
+Content-Security-Policy  (23B) -> X-Content-Security-Poli (23B)
+```
+
+- 只改字节内容，不改文件大小，不动 Go 段偏移；原子写入（同目录临时文件 + rename）。
+- 幂等：已打过会输出 `already patched or nothing to do`。
+- 必须在进程停止后执行（运行中二进制是 Text file busy），所以 `main start` 会先停残留再打补丁。
+- 想保留 CSP 头、只放开 frame-ancestors：启动前设 `MAGPIE_KEEP_CSP=1`。
+- 如果 magpie 自己更新了二进制（会变回原版），重启应用即可重新打上。
+
+## 升级/卸载
+
+- 升级会先停掉老进程与历史 watcher（按 argv 精确匹配，不误杀其他应用的 magpie），保留 `web.key`
+  与数据，再重打补丁。
+- 卸载默认保留 `/vol1/@appdata/magpie` 与 `/vol1/@apphome/magpie`；向导里勾选删除才会清空。
+
 ## 已知说明
 
-- 网关端口 3425 由上游默认值使用；如果 NAS 上已有 magpie 在跑，安装向导里换端口。
+- 网关默认监听 `0.0.0.0:3425`（Agent 可从局域网接入）。若不希望暴露到局域网，可用应用设置把
+  端口改掉，或在飞牛防火墙里限制来源。
 - 打包只做运行时装包，不修改上游配置；模型/供应商仍在 magpie 界面里配。
 
 ## 构建
