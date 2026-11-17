@@ -1,0 +1,7 @@
+#!/bin/bash
+# 设置变更后重启，让新端口/开关生效
+source "$(dirname "$0")/common"
+stop_app
+start_app
+echo "配置已更新" >"${TRIM_TEMP_LOGFILE}"
+exit 0

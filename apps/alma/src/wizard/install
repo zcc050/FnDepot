@@ -1,0 +1,25 @@
+[
+  {
+    "stepTitle": "Alma 配置",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "网页访问端口。修改后会自动重启应用。Alma 自身只监听本机回环，由本包的口令网关对外提供服务。"
+      },
+      {
+        "type": "text",
+        "field": "launcher_port",
+        "label": "Web 端口",
+        "initValue": "23001",
+        "rules": [
+          { "required": true, "message": "请输入端口号" },
+          { "pattern": "^[0-9]+$", "message": "请输入有效的端口号" }
+        ]
+      },
+      {
+        "type": "tips",
+        "helpText": "安全说明：Alma 没有自己的登录体系，能打开网页的人就能以应用用户身份执行命令。因此本包在前面加了一层访问口令（只在 HTTP 层，前端界面不做任何改动）。口令在启动时自动生成，见「访问信息」文件。工具调用默认需要确认（ALMA_TOOL_APPROVAL=ask）。"
+      }
+    ]
+  }
+]

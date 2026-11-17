@@ -43,6 +43,18 @@
               "size": 251777747
             }
           }
+        },
+        "0.8.25": {
+          "changelog": "跟进上游 0.8.25：多 Agent 工作区与可视化工作流改进，详见 https://github.com/EKKOLearnAI/ekko-studio/releases/tag/v0.8.25",
+          "updated_at": "2026-11-16T12:13:24Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/ekko-studio-v0.8.25/ekko-studio-0.8.25-x86.fpk",
+              "sha256": "ee1d5cd9b811a7b62c102ac3c57e1802b677ee9ad9157e6676218d83a05088e0",
+              "size": 251857831
+            }
+          }
         }
       }
     },
@@ -178,6 +190,18 @@
               "size": 40369516
             }
           }
+        },
+        "0.1.4338-2": {
+          "changelog": "跟进上游 0.1.4338：模型/供应商面板与 Agent 适配更新，详见 https://github.com/yetone/magpie/releases/tag/v0.1.4338",
+          "updated_at": "2026-11-16T19:21:54Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/magpie-v0.1.4338-2/magpie-0.1.4338-2-x86.fpk",
+              "sha256": "6a3ba9099bcdf05e88f7fa9c094eb204950e254d77ed0767c7cccff2f8dd7aae",
+              "size": 40400504
+            }
+          }
         }
       }
     },
@@ -251,6 +275,45 @@
               "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.9-4/t3code-0.1.9-4-x86.fpk",
               "sha256": "34c4deb499f34b949e33a638f06fb99a5d6b05e1850fe5adaac7bb4bb1811a7d",
               "size": 150423711
+            }
+          }
+        }
+      }
+    },
+    "alma": {
+      "display_name": "Alma",
+      "desc": "把 Alma 跑在 NAS 上，用浏览器或手机 App 使用；会话、技能、MCP、定时任务都在服务器执行",
+      "platform": [
+        "x86"
+      ],
+      "categories": [
+        "AI赋能",
+        "编程开发"
+      ],
+      "icon_url": "./apps/alma/ICON.PNG",
+      "preview_urls": [
+        "./apps/alma/Preview/1.png"
+      ],
+      "readme_url": "./apps/alma/README.md",
+      "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
+      "maintainer": "yetone",
+      "maintainer_url": "https://github.com/yetone/alma-releases",
+      "distributor": "zcc050",
+      "distributor_url": "https://github.com/zcc050/FnDepot",
+      "run_as": "package",
+      "install_type": "root",
+      "is_docker": false,
+      "service_port": "23001",
+      "releases": {
+        "0.4.726": {
+          "changelog": "跟进上游 0.4.726：Alma headless 服务端，网页/手机 App 访问，前端保持原版未改动",
+          "updated_at": "2026-11-17T22:05:42+08:00",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.726/alma-0.4.726-x86.fpk",
+              "sha256": "b1ab4cfbdd3690be1903c2403efeda15319fb1aad927f6cb3cded5aea64408e4",
+              "size": 230127284
             }
           }
         }

@@ -1,0 +1,238 @@
+#!/bin/bash
+# alma 生命周期共用函数。
+# fnOS 调用 cmd/* 时会导出：
+#   TRIM_APPDEST  安装目录   (/vol1/@appcenter/alma)
+#   TRIM_PKGVAR   持久数据   (/vol1/@appdata/alma)
+#   TRIM_PKGHOME  应用家目录 (/vol1/@apphome/alma)
+#   TRIM_APPDIR   安装中的 fpk 根目录
+#   TRIM_TEMP_LOGFILE  安装失败时展示给用户的内容
+# wizard 字段按字段名导出（如 $launcher_port）
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
+
+APPNAME="alma"
+DEFAULT_WEB_PORT=23001
+
+_resolve_trim_paths() {
+    local appdir="" vol=""
+    appdir="$(readlink -f "/var/apps/${APPNAME}/target" 2>/dev/null || true)"
+    [ -n "$appdir" ] || appdir="${TRIM_APPDEST:-}"
+    case "$appdir" in /vol[0-9]*/@appcenter/*) vol="$(printf '%s' "$appdir" | cut -d/ -f2)" ;; esac
+    if [ -z "$vol" ]; then
+        local v
+        for v in /vol[0-9]*; do
+            [ -d "${v}/@appcenter/${APPNAME}" ] && vol="${v#/}" && break
+        done
+    fi
+    [ -n "$vol" ] || vol="vol1"
+    : "${TRIM_APPDEST:=${appdir:-/${vol}/@appcenter/${APPNAME}}}"
+    : "${TRIM_PKGVAR:=/${vol}/@appdata/${APPNAME}}"
+    : "${TRIM_PKGHOME:=/${vol}/@apphome/${APPNAME}}"
+    : "${TRIM_PKGTMP:=/${vol}/@apptemp/${APPNAME}}"
+}
+_resolve_trim_paths
+
+SERVER_DIR="${TRIM_APPDEST}/server"          # alma-server 解包内容（bin/ go/ lib/ runtime/）
+GATEWAY_JS="${TRIM_APPDEST}/cmd/gateway.mjs"
+NODE_BIN="${SERVER_DIR}/runtime/node"        # 上游自带的 node 运行时
+ENTRY="${SERVER_DIR}/bin/alma-server"
+
+# 对外端口走 wizard 的 launcher_port；alma 自己只绑回环，内部端口错开一位
+WEB_PORT="${launcher_port:-${TRIM_SERVICE_PORT:-$DEFAULT_WEB_PORT}}"
+API_PORT=$((WEB_PORT + 1))
+
+DATA_DIR="${TRIM_PKGVAR}/data"
+KEY_FILE="${TRIM_PKGVAR}/access.key"
+PID_FILE="${TRIM_PKGVAR}/${APPNAME}.pid"
+GW_PID_FILE="${TRIM_PKGVAR}/${APPNAME}-gateway.pid"
+LOG_FILE="${TRIM_PKGVAR}/logs/${APPNAME}.log"
+INFO_FILE="${TRIM_PKGVAR}/access-info.txt"
+START_ERR_LOG="${TRIM_TEMP_LOGFILE:-${TRIM_PKGTMP}/start.log}"
+
+export HOME="${TRIM_PKGHOME}"
+export XDG_CONFIG_HOME="${TRIM_PKGHOME}/.config"
+export XDG_DATA_HOME="${TRIM_PKGHOME}/.local/share"
+export XDG_CACHE_HOME="${TRIM_PKGHOME}/.cache"
+export XDG_STATE_HOME="${TRIM_PKGHOME}/.local/state"
+export ALMA_DATA_DIR="${DATA_DIR}"
+# 工具调用默认要确认：网页/手机端点一下才执行，避免被当成免密终端
+export ALMA_TOOL_APPROVAL="${ALMA_TOOL_APPROVAL:-ask}"
+
+umask 022
+mkdir -p "${TRIM_PKGVAR}" "${TRIM_PKGVAR}/logs" "${TRIM_PKGHOME}" "${DATA_DIR}" \
+         "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" "${XDG_CACHE_HOME}" "${XDG_STATE_HOME}" 2>/dev/null
+
+log_msg() {
+    echo "$(date '+%F %T') - $*" >>"${LOG_FILE}"
+    # 诊断副本：$TRIM_PKGVAR 是 700，出问题后外部拿不到任何线索
+    echo "$(date '+%F %T') - $*" >>"/tmp/${APPNAME}-runtime.log" 2>/dev/null
+}
+install_log() { echo "$(date '+%F %T') $*" >&2; }
+
+is_running() {
+    [ -s "${PID_FILE}" ] || return 1
+    kill -0 "$(cat "${PID_FILE}")" 2>/dev/null || { rm -f "${PID_FILE}"; return 1; }
+}
+gw_running() {
+    [ -s "${GW_PID_FILE}" ] || return 1
+    kill -0 "$(cat "${GW_PID_FILE}")" 2>/dev/null || { rm -f "${GW_PID_FILE}"; return 1; }
+}
+
+port_in_use() {
+    local port="$1" hex
+    if command -v ss >/dev/null 2>&1; then
+        ss -tln 2>/dev/null | grep -q ":${port} "
+        return $?
+    fi
+    # 飞牛调 status 的环境未必有 ss，这里直读 /proc（0A = LISTEN）
+    hex="$(printf '%04X' "$port")"
+    awk -v h=":${hex}" '
+        NR > 1 && substr($2, length($2) - length(h) + 1) == h && $4 == "0A" { f = 1; exit }
+        END { exit !f }
+    ' /proc/net/tcp /proc/net/tcp6 2>/dev/null
+}
+
+argv_has() {
+    local pid="$1" want="$2" arg
+    [ -r "/proc/${pid}/cmdline" ] || return 1
+    while IFS= read -r -d '' arg; do
+        [ "$arg" = "$want" ] && return 0
+    done <"/proc/${pid}/cmdline" 2>/dev/null
+    return 1
+}
+
+# alma 会 exec 换壳：bin/alma-server -> go/alma-server -> runtime/node lib/server.mjs，
+# 所以三个路径都要认。
+is_alma_process() {
+    local pid="$1"
+    [ "$pid" = "$$" ] && return 1
+    [ "$pid" = "$PPID" ] && return 1
+    argv_has "$pid" "${ENTRY}" && return 0
+    argv_has "$pid" "${SERVER_DIR}/go/alma-server" && return 0
+    argv_has "$pid" "${SERVER_DIR}/lib/server.mjs" && return 0
+    return 1
+}
+is_gateway_process() {
+    local pid="$1"
+    [ "$pid" = "$$" ] && return 1
+    [ "$pid" = "$PPID" ] && return 1
+    argv_has "$pid" "${GATEWAY_JS}" && return 0
+    return 1
+}
+
+lan_ip() {
+    local ip
+    ip="$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}')"
+    [ -n "$ip" ] || ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+    printf '%s' "${ip:-127.0.0.1}"
+}
+
+ensure_key() {
+    local k=""
+    [ -s "${KEY_FILE}" ] && k="$(tr -d '\r\n' <"${KEY_FILE}")"
+    if [ "${#k}" -lt 16 ]; then
+        k="$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 24)"
+        printf '%s\n' "$k" >"${KEY_FILE}"
+        chmod 600 "${KEY_FILE}" 2>/dev/null
+        log_msg "generated access key -> ${KEY_FILE}"
+    fi
+    printf '%s' "$k"
+}
+
+# 桌面入口带免登口令，并同步实际监听端口
+sync_ui_entry() {
+    local key="$1" cfg="${TRIM_APPDEST}/ui/config"
+    [ -f "$cfg" ] || return 0
+    sed -i "s|\"url\": \"[^\"]*\"|\"url\": \"/?k=${key}\"|" "$cfg" 2>/dev/null
+    sed -i "s|\"port\": \"[^\"]*\"|\"port\": \"${WEB_PORT}\"|" "$cfg" 2>/dev/null
+}
+
+alma_ready() {
+    local code
+    command -v curl >/dev/null 2>&1 || return 0
+    code="$(curl -s -o /dev/null -m 3 -w '%{http_code}' "http://127.0.0.1:${API_PORT}/api/health" 2>/dev/null)"
+    [ "$code" = "200" ]
+}
+
+gateway_ready() {
+    local code
+    command -v curl >/dev/null 2>&1 || return 0
+    code="$(curl -s -o /dev/null -m 3 -w '%{http_code}' "http://127.0.0.1:${WEB_PORT}/" 2>/dev/null)"
+    case "$code" in 200|302|401) return 0 ;; esac
+    return 1
+}
+
+write_access_info() {
+    local key="$1" ip; ip="$(lan_ip)"
+    cat >"${INFO_FILE}" <<EOF
+Alma 访问信息（启动时自动生成，可删除）
+====================================================
+Web 界面：  http://${ip}:${WEB_PORT}
+免登直达：  http://${ip}:${WEB_PORT}/?k=${key}
+访问口令：  ${key}   （保存在 ${KEY_FILE}，删掉后重启会重新生成）
+
+数据目录：${DATA_DIR}   （会话、设置、供应商密钥都在这里）
+日志：    ${LOG_FILE}
+
+安全说明
+----------------------------------------------------
+Alma 没有自己的登录体系，能打开网页的人就等于拿到这台机器上该应用用户的
+shell。所以本包在它前面挂了一层口令网关（只改 HTTP 层，前端文件一个字节没动）。
+想关掉口令：在应用设置里把 ALMA_NO_AUTH 设为 1，或删掉 ${KEY_FILE} 后手动
+执行 ALMA_GW_NO_AUTH=1 启动——只建议在完全可信的网络里这么做。
+
+工具调用默认需要确认（ALMA_TOOL_APPROVAL=ask）：网页或已配对的手机点一下才执行。
+EOF
+    chmod 600 "${INFO_FILE}" 2>/dev/null
+}
+
+rotate_log() {
+    [ -f "${LOG_FILE}" ] || return 0
+    local size; size="$(stat -c%s "${LOG_FILE}" 2>/dev/null || echo 0)"
+    if [ "${size}" -gt 5242880 ]; then
+        mv -f "${LOG_FILE}" "${LOG_FILE}.1" 2>/dev/null || true
+        log_msg "log rotated (${size} bytes)"
+    fi
+}
+
+# 只按本应用路径锚定清理，避免误杀别处的 alma
+cleanup_own() {
+    local pid pids=() i
+    for pid in $(pgrep -x alma-server 2>/dev/null; pgrep -x node 2>/dev/null); do
+        is_alma_process "$pid" && pids+=("$pid")
+    done
+    for pid in $(pgrep -x node 2>/dev/null); do
+        is_gateway_process "$pid" && pids+=("$pid")
+    done
+    [ "${#pids[@]}" -eq 0 ] && return 0
+    log_msg "cleanup own processes: ${pids[*]}"
+    for pid in "${pids[@]}"; do kill -TERM "$pid" 2>/dev/null || true; done
+    for i in 1 2 3 4 5; do
+        local alive=0
+        for pid in "${pids[@]}"; do kill -0 "$pid" 2>/dev/null && alive=1; done
+        [ "$alive" = "0" ] && return 0
+        sleep 1
+    done
+    for pid in "${pids[@]}"; do kill -KILL "$pid" 2>/dev/null || true; done
+    return 0
+}
+
+stop_app() {
+    local pid i
+    if is_running; then
+        pid="$(cat "${PID_FILE}")"
+        log_msg "stop alma (pid ${pid})"
+        kill -TERM "$pid" 2>/dev/null
+        for i in $(seq 1 15); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
+        kill -0 "$pid" 2>/dev/null && kill -KILL "$pid" 2>/dev/null
+    fi
+    if gw_running; then
+        pid="$(cat "${GW_PID_FILE}")"
+        log_msg "stop gateway (pid ${pid})"
+        kill -TERM "$pid" 2>/dev/null
+        for i in $(seq 1 10); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
+        kill -0 "$pid" 2>/dev/null && kill -KILL "$pid" 2>/dev/null
+    fi
+    rm -f "${PID_FILE}" "${GW_PID_FILE}"
+    cleanup_own
+    return 0
+}

@@ -1,0 +1,89 @@
+#!/bin/bash
+# alma 生命周期（start / stop / restart / status）
+#
+# 形态：
+#   alma-server 只绑 127.0.0.1:${API_PORT}（上游没有 --host，强制回环），
+#   由 cmd/gateway.mjs 在 0.0.0.0:${WEB_PORT} 上做 HTTP/WebSocket 反代并加访问口令。
+#   前端文件一个字节都不改，网关只增加一个 cookie。
+source "$(dirname "$0")/common"
+
+# 应用设置里放一个 no-auth 文件即可关闭口令（不建议）
+if [ -f "${TRIM_PKGVAR}/no-auth" ]; then
+    export ALMA_GW_NO_AUTH=1
+fi
+
+fail_start() {
+    local msg="$1"
+    log_msg "FAIL ${msg}"
+    echo "${msg}" >"${START_ERR_LOG}" 2>/dev/null
+    tail -20 "${LOG_FILE}" 2>/dev/null >&2
+    return 1
+}
+
+start_app() {
+    rotate_log
+    cleanup_own
+
+    local p owners
+    for p in "${WEB_PORT}" "${API_PORT}"; do
+        if port_in_use "$p"; then
+            fail_start "alma 启动失败：端口 ${p} 已被其他程序占用，请换端口或先停掉占用程序。"
+            return 1
+        fi
+    done
+
+    is_running && { alma_ready && gateway_ready && return 0; stop_app; }
+
+    [ -x "${ENTRY}" ] || fail_start "找不到 alma-server 入口：${ENTRY}" || return 1
+    [ -x "${NODE_BIN}" ] || fail_start "找不到内置 node 运行时：${NODE_BIN}" || return 1
+
+    local key; key="$(ensure_key)"
+    sync_ui_entry "$key"
+
+    log_msg "start: alma 127.0.0.1:${API_PORT} -> gateway 0.0.0.0:${WEB_PORT} (approval=${ALMA_TOOL_APPROVAL})"
+    ( cd "${SERVER_DIR}" && exec "${ENTRY}" --port "${API_PORT}" --data-dir "${DATA_DIR}" ) \
+        >>"${LOG_FILE}" 2>&1 &
+    echo $! >"${PID_FILE}"
+
+    local i
+    for i in $(seq 1 90); do
+        if ! is_running; then
+            fail_start "alma-server 启动后立即退出（见日志）。"
+            return 1
+        fi
+        alma_ready && break
+        sleep 1
+    done
+    alma_ready || { fail_start "alma-server 90 秒内未就绪（127.0.0.1:${API_PORT}/api/health）。"; return 1; }
+
+    ( exec "${NODE_BIN}" "${GATEWAY_JS}" "${WEB_PORT}" "${API_PORT}" "$key" ) \
+        >>"${LOG_FILE}" 2>&1 &
+    echo $! >"${GW_PID_FILE}"
+
+    for i in $(seq 1 30); do
+        if ! gw_running; then
+            fail_start "gateway 启动后立即退出（见日志）。"
+            return 1
+        fi
+        gateway_ready && { write_access_info "$key"; log_msg "ready (alma ${API_PORT}, gateway ${WEB_PORT})"; return 0; }
+        sleep 1
+    done
+    fail_start "gateway 30 秒内未就绪（0.0.0.0:${WEB_PORT}）。"
+    return 1
+}
+
+case "$1" in
+    start)   start_app ;;
+    stop)    stop_app ;;
+    restart) stop_app; sleep 1; start_app ;;
+    status)
+        # 飞牛用 status 的退出码决定应用中心显示"运行中/已停止"。
+        # 端口在监听就是活着：权限无关、负载无关（HTTP 探活的坑见 magpie 那次）。
+        if port_in_use "$WEB_PORT" && port_in_use "$API_PORT"; then
+            exit 0
+        fi
+        is_running && exit 4
+        exit 3
+        ;;
+    *) echo "usage: $0 {start|stop|restart|status}"; exit 1 ;;
+esac

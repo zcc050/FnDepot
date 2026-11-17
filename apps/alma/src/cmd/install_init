@@ -1,0 +1,11 @@
+#!/bin/bash
+# 文件拷贝前运行：端口被占就尽早失败
+source "$(dirname "$0")/common"
+
+PORT="${port:-23001}"
+if port_in_use "$PORT" || port_in_use "$((PORT + 1))"; then
+    echo "端口 ${PORT}（或内部端口 $((PORT + 1))）已被占用，请换一个端口后重试" >"${TRIM_TEMP_LOGFILE}"
+    exit 1
+fi
+echo "端口检测通过" >"${TRIM_TEMP_LOGFILE}"
+exit 0

@@ -47,11 +47,18 @@ download() {  # download <url> <dest-file>; cached, resumable, retried
     if [ -s "$dest" ]; then echo "  cached $(basename "$dest")"; return 0; fi
     mkdir -p "$(dirname "$dest")"
     echo "  downloading $(basename "$dest")"
-    # 无人值守环境里 github.com:443 会间歇不通：续传 + 多轮退避重试，不要一次失败就放弃
+    # 无人值守环境里 github.com:443 会间歇不通：续传 + 多轮退避重试；
+    # 直连连续失败后自动切镜像（GH_MIRROR，默认 gh-proxy.com），大包别再干等
+    local try_url
     for i in 1 2 3 4 5; do
-        if curl -fL --http1.1 --retry 3 --retry-all-errors --retry-delay 3 \
+        try_url="$url"
+        if [ "$i" -ge 3 ] && [ -n "${GH_MIRROR:-https://gh-proxy.com/}" ]; then
+            try_url="${GH_MIRROR:-https://gh-proxy.com/}${url}"
+            echo "  改用镜像下载" >&2
+        fi
+        if curl -fL --http1.1 --retry 2 --retry-all-errors --retry-delay 3 \
                  --connect-timeout 20 --max-time 1800 -C - \
-                 -o "$dest.part" "$url"; then
+                 -o "$dest.part" "$try_url"; then
             mv "$dest.part" "$dest"
             return 0
         fi
@@ -116,6 +123,7 @@ app_release_repo() {  # app_release_repo <app> -> owner/repo
         magpie)      echo "yetone/magpie-releases" ;;
         t3code)      echo "pingdotgg/t3code" ;;
         ekko-studio) echo "EKKOLearnAI/ekko-studio" ;;
+        alma)        echo "yetone/alma-releases" ;;
         *) return 1 ;;
     esac
 }

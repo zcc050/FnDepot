@@ -1,0 +1,10 @@
+#!/bin/bash
+# 文件拷贝完成后运行：修可执行位、建数据目录
+source "$(dirname "$0")/common"
+
+chmod +x "${ENTRY}" "${SERVER_DIR}/go/alma-server" "${NODE_BIN}" 2>/dev/null
+chmod 755 "${SERVER_DIR}/resources/cli/alma" "${SERVER_DIR}/resources/bun/bun" 2>/dev/null
+mkdir -p "${DATA_DIR}"
+install_log "安装完成: ${TRIM_APPDEST}（数据目录 ${DATA_DIR}）"
+echo "安装完成" >"${TRIM_TEMP_LOGFILE}"
+exit 0

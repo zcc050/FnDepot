@@ -1,0 +1,7 @@
+#!/bin/bash
+source "$(dirname "$0")/common"
+
+chmod +x "${ENTRY}" "${SERVER_DIR}/go/alma-server" "${NODE_BIN}" 2>/dev/null
+[ -d "${DATA_DIR}" ] || mkdir -p "${DATA_DIR}"
+install_log "升级完成: 数据保留在 ${DATA_DIR}"
+exit 0
