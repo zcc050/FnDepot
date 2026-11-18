@@ -202,6 +202,18 @@
               "size": 40400504
             }
           }
+        },
+        "0.1.4399-2": {
+          "changelog": "跟进上游 0.1.4399：模型/供应商面板与 Agent 适配更新，详见 https://github.com/yetone/magpie/releases/tag/v0.1.4399",
+          "updated_at": "2026-11-17T20:17:42Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/magpie-v0.1.4399-2/magpie-0.1.4399-2-x86.fpk",
+              "sha256": "d68a6e42ff6bcf33b0b798fc9f8b56f44c286bed00dce39ec877c8968b2b5d5b",
+              "size": 40827501
+            }
+          }
         }
       }
     },
@@ -277,6 +289,18 @@
               "size": 150423711
             }
           }
+        },
+        "0.1.10-4": {
+          "changelog": "跟进上游 0.1.10：编码 Agent 控制面、配对与远程访问改进，详见 https://github.com/pingdotgg/t3code/releases/tag/v0.1.10",
+          "updated_at": "2026-11-17T01:44:04Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.10-4/t3code-0.1.10-4-x86.fpk",
+              "sha256": "1b18e468ca1d0f7d4b0537d3969fd90f06105a08302ec06abf87a13dad801e3a",
+              "size": 183837434
+            }
+          }
         }
       }
     },
@@ -305,15 +329,15 @@
       "is_docker": false,
       "service_port": "23001",
       "releases": {
-        "0.4.726": {
+        "0.4.726-1": {
           "changelog": "跟进上游 0.4.726：Alma headless 服务端，网页/手机 App 访问，前端保持原版未改动",
-          "updated_at": "2026-11-17T22:05:42+08:00",
+          "updated_at": "2026-11-18T08:41:48+08:00",
           "os_min_version": "1.0.0",
           "packages": {
             "x86": {
-              "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.726/alma-0.4.726-x86.fpk",
-              "sha256": "b1ab4cfbdd3690be1903c2403efeda15319fb1aad927f6cb3cded5aea64408e4",
-              "size": 230127284
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.726-1/alma-0.4.726-1-x86.fpk",
+              "sha256": "aeded728b3df8b6d3c6ed1dcd2a5693604af34d45b1f97e12a6b3bed23e2aaca",
+              "size": 230338714
             }
           }
         }

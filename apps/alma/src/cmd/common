@@ -31,8 +31,11 @@ _resolve_trim_paths() {
 }
 _resolve_trim_paths
 
+# cmd/* 安装后在 /var/apps/<app>/cmd（不是 $TRIM_APPDEST 下面），所以脚本必须
+# 以自身所在目录定位，不能假设它在安装目录里——沙箱布局和生产布局在这里不一样。
+CMD_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SERVER_DIR="${TRIM_APPDEST}/server"          # alma-server 解包内容（bin/ go/ lib/ runtime/）
-GATEWAY_JS="${TRIM_APPDEST}/cmd/gateway.mjs"
+GATEWAY_JS="${CMD_DIR}/gateway.mjs"
 NODE_BIN="${SERVER_DIR}/runtime/node"        # 上游自带的 node 运行时
 ENTRY="${SERVER_DIR}/bin/alma-server"
 
@@ -63,8 +66,9 @@ mkdir -p "${TRIM_PKGVAR}" "${TRIM_PKGVAR}/logs" "${TRIM_PKGHOME}" "${DATA_DIR}" 
 
 log_msg() {
     echo "$(date '+%F %T') - $*" >>"${LOG_FILE}"
-    # 诊断副本：$TRIM_PKGVAR 是 700，出问题后外部拿不到任何线索
-    echo "$(date '+%F %T') - $*" >>"/tmp/${APPNAME}-runtime.log" 2>/dev/null
+    # 诊断副本：$TRIM_PKGVAR 是 700，出问题后外部拿不到任何线索。
+    # 用子 shell 包住，文件被别的用户占着时不要让重定向错误污染启动输出。
+    ( echo "$(date '+%F %T') - $*" >>"/tmp/${APPNAME}-runtime.log" ) 2>/dev/null
 }
 install_log() { echo "$(date '+%F %T') $*" >&2; }
 
