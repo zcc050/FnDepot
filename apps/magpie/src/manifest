@@ -1,5 +1,5 @@
 appname               = magpie
-version               = 0.1.4446-2
+version               = 0.1.4620-2
 display_name          = magpie
 desc                  = 给 Claude Code、Codex 等 AI Agent 统一换模型、统一走本地网关的桌面与网页控制台
 platform              = x86
