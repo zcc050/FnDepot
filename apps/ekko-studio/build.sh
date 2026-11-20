@@ -24,10 +24,24 @@ print(v[0]["version"])')
 echo "  node ${NODEVER}"
 
 BASE="https://github.com/EKKOLearnAI/ekko-studio/releases/download/${TAG}"
-TGZ="${CACHE}/hermes-web-ui-${VER}.tar.gz"
-SUM="${CACHE}/hermes-web-ui-${VER}.tar.gz.sha256"
-download "${BASE}/hermes-web-ui-${VER}.tar.gz" "$TGZ"
-download "${BASE}/hermes-web-ui-${VER}.tar.gz.sha256" "$SUM"
+# 资产名跟的是内部版本（如 tag v1.1.0 里是 hermes-web-ui-0.8.27.tar.gz），
+# 不能拿 tag 的版本号直接拼——拼出来是 404（曾让整条流水线连续失败）
+UI_ASSET="$(gh_json "repos/EKKOLearnAI/ekko-studio/releases/tags/${TAG}" 2>/dev/null | python3 -c '
+import json, sys
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    raise SystemExit
+names = [a["name"] for a in d.get("assets", [])
+         if a["name"].startswith("hermes-web-ui-") and a["name"].endswith(".tar.gz")]
+print(sorted(names)[-1] if names else "")
+')"
+[ -n "${UI_ASSET:-}" ] || { echo "release ${TAG} 里找不到 hermes-web-ui-*.tar.gz 资产" >&2; exit 1; }
+echo "  资产 ${UI_ASSET}"
+TGZ="${CACHE}/${UI_ASSET}"
+SUM="${CACHE}/${UI_ASSET}.sha256"
+download "${BASE}/${UI_ASSET}" "$TGZ"
+download "${BASE}/${UI_ASSET}.sha256" "$SUM"
 if ! ( cd "$CACHE" && sha256sum -c "$(basename "$SUM")" >/dev/null 2>&1 ); then
     echo "  sha256 不匹配，重新下载" >&2
     rm -f "$TGZ"

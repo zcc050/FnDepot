@@ -202,6 +202,11 @@ if [ "$DRY" = "1" ]; then
 fi
 if [ "${#failed[@]}" -gt 0 ]; then
     log "===== 失败项：${failed[*]}（不发布）"
+    # 构建过程会改写 manifest 里的 version；失败时如果不还原，工作区就变脏，
+    # 下一轮开头的「工作区必须干净」检查会直接退出——曾经因此连续空转 4 轮。
+    if [ -n "$(git status --porcelain -- apps/*/src/manifest 2>/dev/null)" ]; then
+        git checkout -- apps/*/src/manifest 2>/dev/null && log "  已还原 manifest（失败轮不留下脏改动）"
+    fi
     exit 1
 fi
 if [ "${#updated[@]}" -eq 0 ]; then
