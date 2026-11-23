@@ -286,6 +286,18 @@
               "size": 44262657
             }
           }
+        },
+        "0.1.4727-2": {
+          "changelog": "跟进上游 0.1.4727：模型/供应商面板与 Agent 适配更新，详见 https://github.com/yetone/magpie/releases/tag/v0.1.4727",
+          "updated_at": "2026-11-23T18:39:34Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/magpie-v0.1.4727-2/magpie-0.1.4727-2-x86.fpk",
+              "sha256": "b08cc2b9117c4c86f76e785ea64d1facd80906216b253911134268654250995b",
+              "size": 44292969
+            }
+          }
         }
       }
     },
@@ -470,6 +482,18 @@
               "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.1055-1/alma-0.4.1055-1-x86.fpk",
               "sha256": "5dcd4b4d52e9a43f8eb5971467d7ab24cba756f0e14f38d68d937308b8510ccb",
               "size": 234929696
+            }
+          }
+        },
+        "0.4.1071-1": {
+          "changelog": "跟进上游 0.4.1071：Alma headless 服务端，网页/手机 App 访问，前端保持原版未改动",
+          "updated_at": "2026-11-23T18:14:05Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.1071-1/alma-0.4.1071-1-x86.fpk",
+              "sha256": "706e87347a15fdfdec4d843ba2b0bb2128ccf68e3d32d9fa615657c4e75c95ed",
+              "size": 234984930
             }
           }
         }
