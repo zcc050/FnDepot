@@ -240,7 +240,8 @@ for u in "${updated[@]}"; do
         continue
     fi
     url="https://github.com/zcc050/FnDepot/releases/download/${app}-v${ver}/${app}-${ver}-${ARCH}.fpk"
-    code=$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 120 -I "$url" || true)
+    # GitHub 资产下载会间歇超时；重试后再判失败，避免把已上传成功的 Release 误判成 404
+    code=$(curl -sSL -o /dev/null -w '%{http_code}' --retry 3 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 180 -I "$url" || true)
     log "  下载地址 http=${code} ${url}"
     case "$code" in 200|302) ;; *) log "WARN 下载地址返回 ${code}"; release_failed=1 ;; esac
 done

@@ -67,6 +67,18 @@
               "size": 251904561
             }
           }
+        },
+        "0.8.30": {
+          "changelog": "跟进上游 0.8.30：多 Agent 工作区与可视化工作流改进，详见 https://github.com/EKKOLearnAI/ekko-studio/releases/tag/v0.8.30",
+          "updated_at": "2026-11-21T11:03:14Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/ekko-studio-v0.8.30/ekko-studio-0.8.30-x86.fpk",
+              "sha256": "b4ebeba46a53bc9395364b51c66d59969ebf668b667b87a352e284f3275b3f8c",
+              "size": 251893138
+            }
+          }
         }
       }
     },
@@ -262,6 +274,18 @@
               "size": 44079526
             }
           }
+        },
+        "0.1.4713-2": {
+          "changelog": "跟进上游 0.1.4713：模型/供应商面板与 Agent 适配更新，详见 https://github.com/yetone/magpie/releases/tag/v0.1.4713",
+          "updated_at": "2026-11-23T10:44:14Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/magpie-v0.1.4713-2/magpie-0.1.4713-2-x86.fpk",
+              "sha256": "816fbaa6c37e07377102157981ea30b5173f2620a7310c871ba56346f580ec26",
+              "size": 44262657
+            }
+          }
         }
       }
     },
@@ -434,6 +458,18 @@
               "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.939-1/alma-0.4.939-1-x86.fpk",
               "sha256": "67f411469e272c2fc82c835c14d8061126a741e048f675dd1480cb3f639166b5",
               "size": 234242719
+            }
+          }
+        },
+        "0.4.1055-1": {
+          "changelog": "跟进上游 0.4.1055：Alma headless 服务端，网页/手机 App 访问，前端保持原版未改动",
+          "updated_at": "2026-11-23T10:20:57Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.1055-1/alma-0.4.1055-1-x86.fpk",
+              "sha256": "5dcd4b4d52e9a43f8eb5971467d7ab24cba756f0e14f38d68d937308b8510ccb",
+              "size": 234929696
             }
           }
         }
