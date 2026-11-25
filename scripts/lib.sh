@@ -124,6 +124,7 @@ app_release_repo() {  # app_release_repo <app> -> owner/repo
         t3code)      echo "pingdotgg/t3code" ;;
         ekko-studio) echo "EKKOLearnAI/ekko-studio" ;;
         alma)        echo "yetone/alma-releases" ;;
+        ds-bot)      echo "Fei-Craft/DS-Bot" ;;
         *) return 1 ;;
     esac
 }
