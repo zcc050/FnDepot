@@ -1,5 +1,5 @@
 appname               = alma
-version               = 0.4.1140-1
+version               = 0.4.1171-1
 display_name          = Alma
 desc                  = 把 Alma 跑在 NAS 上，用浏览器或手机 App 使用；会话、技能、MCP、定时任务都在服务器执行
 platform              = x86
