@@ -1,0 +1,19 @@
+{
+    ".url": {
+        "ds-bot.Application": {
+            "title": "DS Bot",
+            "icon": "images/icon_{0}.png",
+            "type": "url",
+            "protocol": "http",
+            "port": "${launcher_port}",
+            "url": "/",
+            "allUsers": false,
+            "control": {
+                "fullUrlPerm": "editable",
+                "pathPerm": "hidden",
+                "portPerm": "readonly",
+                "accessPerm": "readonly"
+            }
+        }
+    }
+}

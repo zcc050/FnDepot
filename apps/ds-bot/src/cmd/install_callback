@@ -1,0 +1,11 @@
+#!/bin/bash
+# Runs after files are copied, before the app is started.
+source "$(dirname "$0")/common"
+
+chmod 755 "${SERVER_DIR}/bin/"* 2>/dev/null
+chmod 755 "${SERVER_DIR}/node_modules/@deepseek-ai/dsh/lib/bin.js" 2>/dev/null
+mkdir -p "${DSH_HOME}" "${WORKSPACE_DIR}" 2>/dev/null || true
+
+install_log "安装完成: ${TRIM_APPDEST}（Web ${PORT}，数据 ${TRIM_PKGVAR}）"
+echo "安装完成。打开 http://<NAS-IP>:${PORT}/ ，在设置里填入模型 API Key 即可使用。" >"${TRIM_TEMP_LOGFILE}"
+exit 0

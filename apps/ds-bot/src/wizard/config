@@ -1,0 +1,31 @@
+[
+  {
+    "stepTitle": "DS Bot 配置",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "Web 访问端口，修改后会重启应用。"
+      },
+      {
+        "type": "text",
+        "field": "launcher_port",
+        "label": "Web 端口",
+        "initValue": "13080",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入端口号"
+          },
+          {
+            "pattern": "^[0-9]+$",
+            "message": "请输入有效的端口号"
+          }
+        ]
+      },
+      {
+        "type": "tips",
+        "helpText": "模型 API Key 不在这里配置，请在 Web 界面的设置里填写。"
+      }
+    ]
+  }
+]

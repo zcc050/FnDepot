@@ -1,0 +1,47 @@
+#!/bin/bash
+# Foreground launcher for DS Bot. Started by cmd/main, which detaches it and
+# tracks the PID; whatever this script execs becomes the tracked process.
+#
+# The package ships its own Node runtime, a pinned dsh and a pre-seeded DSH_HOME
+# template (the ds-bot plugin is already installed in it), so the first start
+# needs no network access — only model API calls do. This mirrors what DS Bot's
+# own docker/Dockerfile bakes into the image.
+source "$(dirname "$0")/common"
+
+SERVER="${TRIM_APPDEST}/server"
+TEMPLATE="${SERVER}/dsh-template"
+PLUGIN_TGZ="${SERVER}/ds-bot/ds-bot.tgz"
+
+export PATH="${SERVER}/bin:${PATH}"
+export NODE_ENV=production
+export npm_config_cache="${DSH_HOME}/.npm-cache"
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+[ -x "${SERVER}/bin/dsh" ] || { log_msg "ERROR ${SERVER}/bin/dsh 缺失"; exit 1; }
+
+# First start seeds the data dir with the template profile built at package time.
+if [ ! -d "${DSH_HOME}/profiles/web" ]; then
+    if [ -d "${TEMPLATE}/profiles/web" ]; then
+        log_msg "首次启动：从 ${TEMPLATE} 播种 DSH_HOME"
+        cp -a "${TEMPLATE}/." "${DSH_HOME}/" >>"${LOG_FILE}" 2>&1 || {
+            log_msg "ERROR 播种 DSH_HOME 失败"; exit 1; }
+    else
+        # Package built without a template — fall back to installing the bundled
+        # tarball, which needs the registry to resolve dsh's peer deps.
+        log_msg "首次启动：无模板，从 ${PLUGIN_TGZ} 安装插件"
+        "${SERVER}/bin/dsh" plugin --profile web add "${PLUGIN_TGZ}" >>"${LOG_FILE}" 2>&1 || {
+            log_msg "ERROR ds-bot 插件安装失败"; exit 1; }
+    fi
+    log_msg "profile ready"
+fi
+
+HOST="$(bind_addr)"
+log_msg "exec dsh web on ${HOST}:${PORT}"
+
+set -- --profile web --no-open --host "$HOST" --port "$PORT"
+for trusted in "$HOST" "$(lan_ip)" localhost 127.0.0.1; do
+    set -- "$@" --trusted-host "$trusted"
+done
+
+cd "${WORKSPACE_DIR}" || cd "${TRIM_PKGVAR}" || exit 1
+exec "${SERVER}/bin/dsh" "$@"

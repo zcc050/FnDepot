@@ -1,0 +1,13 @@
+#!/bin/bash
+# Runs after uninstall; keep data unless the user asked to delete it.
+source "$(dirname "$0")/common"
+
+stop_bg
+if [ "${wizard_delete_data}" = "true" ]; then
+    rm -rf "${TRIM_PKGVAR:?}"/* "${TRIM_PKGVAR:?}"/.[!.]* 2>/dev/null
+    rm -rf "${TRIM_PKGHOME:?}"/* "${TRIM_PKGHOME:?}"/.[!.]* 2>/dev/null
+    install_log "已删除应用数据"
+else
+    install_log "已保留应用数据: ${TRIM_PKGVAR}"
+fi
+exit 0

@@ -1,0 +1,11 @@
+#!/bin/bash
+# Settings written: restart on the new port.
+source "$(dirname "$0")/common"
+
+stop_bg
+if bash "$(dirname "$0")/main" start; then
+    echo "配置已生效（Web ${PORT}）" >"${TRIM_TEMP_LOGFILE}"
+    exit 0
+fi
+echo "配置已保存，但服务没能起来，请查看 ${LOG_FILE}" >"${TRIM_TEMP_LOGFILE}"
+exit 1

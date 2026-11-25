@@ -1,0 +1,11 @@
+#!/bin/bash
+# Runs after an upgrade; the service is started again by the system.
+source "$(dirname "$0")/common"
+
+chmod 755 "${SERVER_DIR}/bin/"* 2>/dev/null
+chmod 755 "${SERVER_DIR}/node_modules/@deepseek-ai/dsh/lib/bin.js" 2>/dev/null
+
+# 已有的 DSH_HOME 是用户数据，升级不覆盖。若这次换了 dsh 大版本，旧 profile
+# 里的 node_modules 仍指向上一版 dsh —— 启动失败时按 README 的说明重建数据。
+install_log "升级完成（数据保留在 ${TRIM_PKGVAR}，如启动失败请参考 README 的升级说明）"
+exit 0

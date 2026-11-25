@@ -534,6 +534,43 @@
           }
         }
       }
+    },
+    "ds-bot": {
+      "display_name": "DS Bot",
+      "desc": "基于 DeepSeekRuntime（dsh）的开源 Bot 框架，可创建长期在线的 bot 与群聊，Web 界面管理；包内自带 Node 运行时与 dsh，首次启动无需联网",
+      "platform": [
+        "x86"
+      ],
+      "categories": [
+        "AI赋能",
+        "编程开发"
+      ],
+      "icon_url": "./apps/ds-bot/ICON.PNG",
+      "preview_urls": [],
+      "readme_url": "./apps/ds-bot/README.md",
+      "bug_report_url": "https://github.com/zcc050/FnDepot/issues",
+      "maintainer": "Fei2411",
+      "maintainer_url": "https://github.com/Fei2411",
+      "distributor": "zcc050",
+      "distributor_url": "https://github.com/zcc050/FnDepot",
+      "run_as": "package",
+      "install_type": "root",
+      "is_docker": false,
+      "service_port": "13080",
+      "releases": {
+        "0.3.10": {
+          "changelog": "首版：跟进上游 0.3.10（dsh 0.2.2-rc.1，Node 24.22.3）。包内自带运行时与已装好插件的 DSH_HOME，首次启动无需联网；安装后在 Web 设置里填模型 API Key。",
+          "updated_at": "2026-11-22T10:33:27.831Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/ds-bot-v0.3.10/ds-bot-0.3.10-x86.fpk",
+              "sha256": "dd12e5bbfd40aebba600bef2f61c056c63fd2bd8f3223d99e6a794985e039cb9",
+              "size": 235855456
+            }
+          }
+        }
+      }
     }
   }
 }

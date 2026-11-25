@@ -1,0 +1,100 @@
+#!/bin/bash
+# Shared helpers for the ds-bot fpk lifecycle scripts.
+# fnOS exports these when calling cmd/*:
+#   TRIM_APPDEST  installed app dir       (/vol1/@appcenter/<appname>)
+#   TRIM_PKGVAR   persistent data dir     (/vol1/@appdata/<appname>)
+#   TRIM_PKGHOME  per-app home dir        (/vol1/@apphome/<appname>)
+#   TRIM_APPDIR    fpk root while installing/uninstalling
+#   TRIM_TEMP_LOGFILE  file whose content the installer shows on failure
+# Wizard fields are exported under their field name (e.g. $launcher_port).
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
+
+APPNAME="ds-bot"
+SERVER_DIR="${TRIM_APPDEST}/server"
+LOG_DIR="${TRIM_PKGVAR}/logs"
+LOG_FILE="${LOG_DIR}/${APPNAME}.log"
+PID_FILE="${TRIM_PKGVAR}/${APPNAME}.pid"
+
+# dsh keeps everything under DSH_HOME; bot workspaces live next to it.
+export DSH_HOME="${TRIM_PKGVAR}/data"
+WORKSPACE_DIR="${TRIM_PKGVAR}/workspace"
+export HOME="${TRIM_PKGHOME}"
+export XDG_CONFIG_HOME="${TRIM_PKGHOME}/.config"
+export XDG_DATA_HOME="${TRIM_PKGHOME}/.local/share"
+export XDG_CACHE_HOME="${TRIM_PKGHOME}/.cache"
+
+mkdir -p "${LOG_DIR}" "${TRIM_PKGHOME}" "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" \
+         "${XDG_CACHE_HOME}" "${DSH_HOME}" "${WORKSPACE_DIR}" 2>/dev/null || true
+
+# launcher_port comes from the wizard and changes when the user edits settings.
+PORT="${launcher_port:-13080}"
+
+log_msg() { echo "$(date '+%F %T') - $*" >>"${LOG_FILE}"; }
+# install_log goes to stderr so it lands in the installer's log view.
+install_log() { echo "$(date '+%F %T') $*" >&2; }
+
+port_in_use() {
+    ss -tln 2>/dev/null | awk -v p=":$1" '$4 ~ p"$" {found=1} END {exit !found}'
+}
+
+lan_ip() {
+    local ip=""
+    ip="$(ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}')"
+    [ -n "$ip" ] || ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+    printf '%s' "${ip:-127.0.0.1}"
+}
+
+# dsh 0.2.2 refuses a wildcard bind ("binding every interface would expose
+# remote code execution"), so the launcher has to name one concrete address.
+# DSBOT_BIND overrides it — the smoke test pins loopback that way.
+bind_addr() {
+    if [ -n "${DSBOT_BIND:-}" ]; then printf '%s' "${DSBOT_BIND}"; return 0; fi
+    lan_ip
+}
+
+is_running() {
+    [ -s "${PID_FILE}" ] || return 1
+    kill -0 "$(cat "${PID_FILE}")" 2>/dev/null || { rm -f "${PID_FILE}"; return 1; }
+}
+
+service_ready() {
+    command -v curl >/dev/null 2>&1 || return 0
+    local code
+    code="$(curl -s -o /dev/null -m 3 -w '%{http_code}' "http://$(bind_addr):${PORT}/" 2>/dev/null)"
+    case "$code" in 200|302|401) return 0 ;; esac
+    return 1
+}
+
+# The desktop entry has to point at the port the user actually configured.
+patch_ui_config() {
+    local cfg="${TRIM_APPDEST}/ui/config"
+    [ -f "$cfg" ] || return 0
+    sed -i "s|\"port\": \"[^\"]*\"|\"port\": \"${PORT}\"|" "$cfg" 2>/dev/null || true
+}
+
+# start_bg <command...>: start detached, return 0 as soon as it is alive.
+start_bg() {
+    if is_running; then log_msg "already running (pid $(cat "${PID_FILE}"))"; return 0; fi
+    log_msg "start: $* (bind $(bind_addr):${PORT})"
+    ( cd "${SERVER_DIR}" && exec "$@" >>"${LOG_FILE}" 2>&1 ) &
+    echo $! >"${PID_FILE}"
+    local i
+    for i in $(seq 1 60); do
+        is_running || { log_msg "exited right after start, see ${LOG_FILE}"; rm -f "${PID_FILE}"; return 1; }
+        service_ready && { log_msg "ready (pid $(cat "${PID_FILE}"))"; return 0; }
+        sleep 1
+    done
+    log_msg "not ready after 60s, see ${LOG_FILE}"
+    return 1
+}
+
+stop_bg() {
+    is_running || { log_msg "not running"; return 0; }
+    local pid; pid=$(cat "${PID_FILE}")
+    log_msg "stop (pid ${pid})"
+    kill -TERM "${pid}" 2>/dev/null
+    for _ in $(seq 1 15); do kill -0 "${pid}" 2>/dev/null || break; sleep 1; done
+    kill -0 "${pid}" 2>/dev/null && kill -KILL "${pid}" 2>/dev/null
+    rm -f "${PID_FILE}"
+    return 0
+}

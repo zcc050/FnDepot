@@ -1,0 +1,54 @@
+#!/bin/bash
+# DS Bot lifecycle (start / stop / restart / status). Exit 0 = ok, status exits
+# 3 when stopped (fnOS reads that code to render 运行中/已停止).
+source "$(dirname "$0")/common"
+
+LAUNCHER="$(cd "$(dirname "$0")" && pwd)/launcher"
+
+start_app() {
+    rotate_log
+
+    if port_in_use "${PORT}"; then
+        if is_running; then
+            log_msg "already listening on ${PORT}"
+            return 0
+        fi
+        # Someone else holds the port — starting anyway would fail deep inside
+        # dsh with a confusing EADDRINUSE.
+        echo "端口 ${PORT} 已被其他程序占用，请在应用设置里换一个端口。" >"${TRIM_TEMP_LOGFILE}" 2>/dev/null
+        log_msg "FAIL port ${PORT} is held by another process"
+        return 1
+    fi
+
+    patch_ui_config
+    if start_bg bash "${LAUNCHER}"; then
+        return 0
+    fi
+    echo "DS Bot 启动失败，请查看 ${LOG_FILE}" >"${TRIM_TEMP_LOGFILE}" 2>/dev/null
+    tail -20 "${LOG_FILE}" 2>/dev/null >&2
+    return 1
+}
+
+rotate_log() {
+    [ -f "${LOG_FILE}" ] || return 0
+    local size; size="$(stat -c%s "${LOG_FILE}" 2>/dev/null || echo 0)"
+    if [ "${size}" -gt 5242880 ]; then
+        mv -f "${LOG_FILE}" "${LOG_FILE}.1" 2>/dev/null || true
+        log_msg "log rotated (${size} bytes)"
+    fi
+}
+
+case "$1" in
+    start)   start_app ;;
+    stop)    stop_bg ;;
+    restart) stop_bg; sleep 1; start_app ;;
+    status)
+        # 飞牛定期调 status 决定应用中心显示"运行中/已停止"。不能用 PID 文件做首判：
+        # 调用者未必能读 $TRIM_PKGVAR（700），读不到就会把活着的进程判成停止。
+        # 端口在监听与权限无关，优先用它。
+        if port_in_use "${PORT}"; then exit 0; fi
+        is_running && exit 4
+        exit 3
+        ;;
+    *) echo "usage: $0 {start|stop|restart|status}"; exit 1 ;;
+esac
