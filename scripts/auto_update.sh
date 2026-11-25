@@ -240,14 +240,29 @@ for u in "${updated[@]}"; do
         continue
     fi
     url="https://github.com/zcc050/FnDepot/releases/download/${app}-v${ver}/${app}-${ver}-${ARCH}.fpk"
-    # GitHub 资产下载会间歇超时；重试后再判失败，避免把已上传成功的 Release 误判成 404
-    code=$(curl -sSL -o /dev/null -w '%{http_code}' --retry 3 --retry-all-errors --retry-delay 5 --connect-timeout 20 --max-time 180 -I "$url" || true)
+    # publish_release.py 返回 0 时上传已确认（http=201）。这里再探一次下载地址：
+    # github.com / release-assets 会间歇性连不上，只有明确的 404 才算资产缺失；
+    # 连接超时、5xx 之类按「网络异常、资产已上传」放行，避免一次抖动把已成功的
+    # Release 误判成失败，进而留下一堆脏改动把后续轮次全卡死。
+    code=$(curl -sSL --http1.1 -o /dev/null -w '%{http_code}' \
+        --retry 5 --retry-all-errors --retry-delay 8 --connect-timeout 20 --max-time 180 \
+        -I "$url" || true)
     log "  下载地址 http=${code} ${url}"
-    case "$code" in 200|302) ;; *) log "WARN 下载地址返回 ${code}"; release_failed=1 ;; esac
+    case "$code" in
+        200|302) ;;
+        404) log "WARN 下载地址 404（资产不存在）"; release_failed=1 ;;
+        *)   log "WARN 下载地址校验网络异常 http=${code}（资产上传已成功，按通过处理）" ;;
+    esac
 done
 
 if [ "$release_failed" = "1" ]; then
-    log "===== 有 Release 发布或下载校验失败，本轮不更新索引、不推送（避免索引指向 404）"
+    log "===== 有 Release 下载校验失败，本轮不更新索引、不推送（避免索引指向 404）"
+    # 走到这里时 build 已改写 manifest、build_index.py 已重写 fnpack.json；
+    # 不还原则工作区变脏，下一轮开头的「工作区必须干净」检查会直接退出
+    # （此前就因一次网络抖动连续空转多轮）。与上方「构建失败」分支一致：还原工作区。
+    if [ -n "$(git status --porcelain -- apps/*/src/manifest fnpack.json 2>/dev/null)" ]; then
+        git checkout -- apps/*/src/manifest fnpack.json 2>/dev/null && log "  已还原 manifest 与 fnpack.json（失败轮不留脏改动）"
+    fi
     exit 3
 fi
 
