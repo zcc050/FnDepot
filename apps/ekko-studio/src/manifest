@@ -1,5 +1,5 @@
 appname               = ekko-studio
-version               = 0.8.31
+version               = 0.8.32
 display_name          = Ekko Studio
 desc                  = 本地优先的 AI 工作区：多 Agent 聊天、编码与可视化工作流，可自托管的 Web 控制台
 platform              = x86

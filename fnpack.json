@@ -91,6 +91,18 @@
               "size": 251928137
             }
           }
+        },
+        "0.8.32": {
+          "changelog": "跟进上游 0.8.32：多 Agent 工作区与可视化工作流改进，详见 https://github.com/EKKOLearnAI/ekko-studio/releases/tag/v0.8.32",
+          "updated_at": "2026-11-26T04:12:38Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/ekko-studio-v0.8.32/ekko-studio-0.8.32-x86.fpk",
+              "sha256": "ac7e64c20b30f3edf9476ac348082c958570e8ec717568bc48193e8186ccf99e",
+              "size": 251939926
+            }
+          }
         }
       }
     },
@@ -346,6 +358,18 @@
               "size": 44812560
             }
           }
+        },
+        "0.1.4904-2": {
+          "changelog": "跟进上游 0.1.4904：模型/供应商面板与 Agent 适配更新，详见 https://github.com/yetone/magpie/releases/tag/v0.1.4904",
+          "updated_at": "2026-11-26T19:56:48Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/magpie-v0.1.4904-2/magpie-0.1.4904-2-x86.fpk",
+              "sha256": "0efb49fc951c81fb4a3146bf68386d1c517774986d020e2fec23e23877826ebc",
+              "size": 45128660
+            }
+          }
         }
       }
     },
@@ -455,6 +479,18 @@
               "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.12-4/t3code-0.1.12-4-x86.fpk",
               "sha256": "9996de3b183e71bf8080947f57159dd5d87982ccb18507d779e395cf1fc1f3ed",
               "size": 188131096
+            }
+          }
+        },
+        "0.1.13-4": {
+          "changelog": "跟进上游 0.1.13：编码 Agent 控制面、配对与远程访问改进，详见 https://github.com/pingdotgg/t3code/releases/tag/v0.1.13",
+          "updated_at": "2026-11-26T19:32:24Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/t3code-v0.1.13-4/t3code-0.1.13-4-x86.fpk",
+              "sha256": "07a9b939ad113b7e26eb06a664017a14848fee68e0cb71dc6cbd3a27630f1bda",
+              "size": 186925165
             }
           }
         }
@@ -590,6 +626,18 @@
               "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.1171-1/alma-0.4.1171-1-x86.fpk",
               "sha256": "2721e259f62909439d5692b70c63a9bfdd0382f8e6564505109f2fba4b996b3d",
               "size": 235995289
+            }
+          }
+        },
+        "0.4.1209-1": {
+          "changelog": "跟进上游 0.4.1209：Alma headless 服务端，网页/手机 App 访问，前端保持原版未改动",
+          "updated_at": "2026-11-26T19:40:33Z",
+          "os_min_version": "1.0.0",
+          "packages": {
+            "x86": {
+              "download_url": "https://github.com/zcc050/FnDepot/releases/download/alma-v0.4.1209-1/alma-0.4.1209-1-x86.fpk",
+              "sha256": "a1c5e2c8a274dff3217975b875d97aa0692f6c79b11a876218d625f8bbad71cf",
+              "size": 238624364
             }
           }
         }
